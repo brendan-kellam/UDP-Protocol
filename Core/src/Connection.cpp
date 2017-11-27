@@ -246,6 +246,7 @@ void CConnection::DetectPacketLoss()
 void CConnection::DetectFlowChange()
 {
 
+	// Get now time
 	auto now = STEADY_CLOCK_NOW;
 
 	// CASE: connection RTT is beyond maximum flow rate
