@@ -11,7 +11,7 @@
 #include "Address.h"
 #include "Packet.h"
 
-#define DEFAULT_FILE_NAME "log.txt"
+#define DEFAULT_FILE_NAME "log.log"
 
 class CLogManager final
 	: public IManager, public CSingleton<CLogManager>
