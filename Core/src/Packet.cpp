@@ -15,6 +15,7 @@ CPacket::CPacket()
 
 }
 
+
 bool CPacket::ConstructPacket(unsigned char payload[PAYLOAD_SIZE])
 {
 	memset(m_buffer, '\0', PACKET_SIZE);

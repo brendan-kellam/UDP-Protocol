@@ -42,6 +42,12 @@
     <ClInclude Include="src\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\BitWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Socket.cpp">
@@ -60,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BitWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

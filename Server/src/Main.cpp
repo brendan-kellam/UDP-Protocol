@@ -5,6 +5,7 @@
 #include "ConnectionManager.h"
 #include "LogManager.h"
 #include "Serialize.h"
+#include "BitWriter.h"
 
 #define SERVER_NAME "Server"
 
@@ -40,19 +41,33 @@ int main(int argc, char** argv)
 {
 	std::cout << "running.." << std::endl;
 
-	std::bitset<32> b(27);
+	unsigned char data[256];
 
-	std::cout << b << std::endl;
 
-	for (int i = 0; i < 32; i++)
 	{
-		if (b[i])
-		{
-			std::cout << "Bit Set - " << i << std::endl;
-		}
+		CBitWriter writer((uint32_t*)data, 256);
+
+		writer.WriteBits(6, 3);
+
+		writer.WriteBits(685, 10);
+
+		writer.WriteBits(16099933, 24);
+
+		writer.WriteBits(685, 10);
+
+		writer.WriteBits(174764, 18);
 	}
 
+	uint32_t* test = (uint32_t*) data;
 
+	for (int i = 0; i < 3; i++)
+	{
+		std::cout << "Word " << i << ":" << test[i] << std::endl;
+	}
+
+	system("pause");
+
+	/*
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();
 	
@@ -61,6 +76,7 @@ int main(int argc, char** argv)
 
 	CConnectionManager::Instance().ShutDown();
 	CLogManager::Instance().ShutDown();
+	*/
 
 	return 0;
 }

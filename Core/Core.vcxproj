@@ -127,17 +127,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Address.h" />
+    <ClInclude Include="src\BitWriter.h" />
     <ClInclude Include="src\Comparators.h" />
     <ClInclude Include="src\Connection.h" />
     <ClInclude Include="src\LogManager.h" />
     <ClInclude Include="src\Manager.h" />
     <ClInclude Include="src\Packet.h" />
+    <ClInclude Include="src\Platform.h" />
     <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\Socket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Address.cpp" />
+    <ClCompile Include="src\BitWriter.cpp" />
     <ClCompile Include="src\Connection.cpp" />
     <ClCompile Include="src\LogManager.cpp" />
     <ClCompile Include="src\Packet.cpp" />
