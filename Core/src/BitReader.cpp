@@ -2,25 +2,15 @@
 #include "LogManager.h"
 #include "Platform.h"
 
-
 CBitReader::CBitReader(uint32_t* buffer, size_t bufferLen)
-	: m_scratch(0),
-	m_scratchBits(0),
-	m_wordIndex(0),
+	: CBitPacker(buffer, bufferLen),
 	m_numBitsRead(0),
-	m_bufferLen(bufferLen),
-	m_buffer(buffer),
 	m_totalBits(bufferLen * 8)
 {
-
 	log << "Bit reader running..";
 	CLogManager::Instance().WriteLine(log.str());
 	log.str("");
-
-	UDP_TRAP(bufferLen % 4 == 0);
-
 }
-
 
 uint32_t CBitReader::ReadBits(const int bits)
 {
@@ -117,24 +107,4 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 	
 	return output;
-}
-
-std::string CBitReader::getBits(uint64_t val)
-{
-
-	if (val == 0)
-	{
-		return std::string("0");
-	}
-
-	std::string g;
-	while (val != 0)
-	{
-		g += std::to_string((val % 2 != 0));
-
-		val /= 2;
-	}
-	std::reverse(g.begin(), g.end());
-
-	return g;
 }

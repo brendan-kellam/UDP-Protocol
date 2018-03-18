@@ -7,6 +7,7 @@
 #include "Serialize.h"
 #include "BitWriter.h"
 #include "BitReader.h"
+#include "BitPacker.h"
 
 #define SERVER_NAME "Server"
 
@@ -74,6 +75,8 @@ int main(int argc, char** argv)
 
 		reader.ReadBits(10);
 	}
+
+
 
 	/*
 	uint32_t* test = (uint32_t*) data;

@@ -1,42 +1,22 @@
 #ifndef BITREADER_H
 #define BITREADER_H
 
-#include <iostream>
 #include <sstream>
+#include "BitPacker.h"
 
-#define WORD_SIZE 32
-
-
-class CBitReader
+class CBitReader 
+	: public CBitPacker
 {
 
 private:
-	// 64bit scratch word: Double the word size (32bits)
-	// Used for overflow when writing
-	uint64_t m_scratch;
-
-	// The current number of bits currently in m_scratch
-	int m_scratchBits;
 
 	// Number of words
 	size_t m_totalBits;
 
+	// Total of number bits read
 	int m_numBitsRead;
 
-	int m_wordIndex;
-
-
-	// Buffer pointer
-	// NOTE: Packet payload buffer needs to be a multiple of 4 bytes
-	// (Due to word level = 32 bits)
-	uint32_t* m_buffer;
-
-	// Length of m_buffer
-	size_t m_bufferLen;
-
 	std::ostringstream log;
-
-	std::string getBits(uint64_t val);
 
 public:
 
