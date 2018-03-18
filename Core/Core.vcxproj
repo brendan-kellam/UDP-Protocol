@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Address.h" />
+    <ClInclude Include="src\BitReader.h" />
     <ClInclude Include="src\BitWriter.h" />
     <ClInclude Include="src\Comparators.h" />
     <ClInclude Include="src\Connection.h" />
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Address.cpp" />
+    <ClCompile Include="src\BitReader.cpp" />
     <ClCompile Include="src\BitWriter.cpp" />
     <ClCompile Include="src\Connection.cpp" />
     <ClCompile Include="src\LogManager.cpp" />

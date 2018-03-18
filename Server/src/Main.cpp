@@ -6,6 +6,7 @@
 #include "LogManager.h"
 #include "Serialize.h"
 #include "BitWriter.h"
+#include "BitReader.h"
 
 #define SERVER_NAME "Server"
 
@@ -58,12 +59,30 @@ int main(int argc, char** argv)
 		writer.WriteBits(174764, 18);
 	}
 
+	{
+		CBitReader reader((uint32_t*)data, 256);
+
+		reader.ReadBits(3);
+
+		reader.ReadBits(10);
+
+		reader.ReadBits(24);
+
+		reader.ReadBits(10);
+
+		reader.ReadBits(18);
+
+		reader.ReadBits(10);
+	}
+
+	/*
 	uint32_t* test = (uint32_t*) data;
 
 	for (int i = 0; i < 3; i++)
 	{
 		std::cout << "Word " << i << ":" << test[i] << std::endl;
 	}
+	*/
 
 	system("pause");
 

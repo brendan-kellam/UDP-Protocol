@@ -1,12 +1,11 @@
-#pragma once
+#ifndef BITWRITER_H
+#define BITWRITER_H
 
 #include <iostream>
-#include "LogManager.h"
-#include "Platform.h"
+#include <sstream>
 
 void printBits(uint64_t val, bool newLine = true);
 
-std::string getBits(uint64_t val);
 
 #define WORD_SIZE 32
 
@@ -40,6 +39,8 @@ private:
 		
 	std::ostringstream log;
 
+	std::string getBits(uint64_t val);
+
 public:
 	
 	
@@ -53,10 +54,7 @@ public:
 	CBitWriter(uint32_t* buffer, size_t bufferLen);
 
 
-	~CBitWriter()
-	{
-		FlushScratch();
-	}
+	~CBitWriter();
 
 	void WriteBits(uint32_t data, const int bits);
 
@@ -70,3 +68,6 @@ public:
 	//************************************
 	void FlushScratch();
 };
+
+
+#endif

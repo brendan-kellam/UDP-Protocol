@@ -1,6 +1,8 @@
 #include "BitWriter.h"
 
 #include <string>
+#include "LogManager.h"
+#include "Platform.h"
 
 // Constructor
 CBitWriter::CBitWriter(uint32_t* buffer, size_t bufferLen)
@@ -15,6 +17,11 @@ CBitWriter::CBitWriter(uint32_t* buffer, size_t bufferLen)
 	log.str("");
 
 	UDP_TRAP(bufferLen % 4 == 0);
+}
+
+CBitWriter::~CBitWriter()
+{
+	FlushScratch();
 }
 
 
@@ -165,7 +172,7 @@ void printBits(uint64_t val, bool newLine /* = true */)
 	if (newLine) std::cout << std::endl;
 }
 
-std::string getBits(uint64_t val)
+std::string CBitWriter::getBits(uint64_t val)
 {
 
 	if (val == 0)
