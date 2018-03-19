@@ -44,7 +44,7 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 		m_scratch <<= WORD_SIZE;
 
-		// We can ONLY read if the wordIndex is stricly less than the bufferLength
+		// We can ONLY read if the wordIndex is strictly less than the bufferLength
 		UDP_TRAP(m_wordIndex < m_bufferLen)
 
 		m_scratch += m_buffer[m_wordIndex];
@@ -70,8 +70,8 @@ uint32_t CBitReader::ReadBits(const int bits)
 	int remainingBits = m_scratchBits - bits;
 
 	// Create mask
-	unsigned mask;
-	mask = (1 << bits) - 1;
+	uint64_t mask;
+	mask = (1ULL << bits) - 1ULL;
 
 	/* 
 	* We want to grab the #<bits> most significant bits from m_scratch. This can be done by shifting
@@ -88,14 +88,13 @@ uint32_t CBitReader::ReadBits(const int bits)
 	uint32_t output = (m_scratch >> remainingBits) & mask;
 	
 	// Grab remaining bits
-	mask = (1 << remainingBits) - 1;
+	mask = (1ULL << remainingBits) - 1ULL;
 	m_scratch &= mask;
 
+	// Set scratch to remaining
 	m_scratchBits = remainingBits;
 
-	std::cout << output << std::endl;
-	std::cout << m_scratch << std::endl;
-
+	// Increase the number of bits read
 	m_numBitsRead += bits;
 
 	// Telem
@@ -105,6 +104,5 @@ uint32_t CBitReader::ReadBits(const int bits)
 		log.str("");
 	}
 
-	
 	return output;
 }

@@ -7,7 +7,6 @@
 #include "Serialize.h"
 #include "BitWriter.h"
 #include "BitReader.h"
-#include "BitPacker.h"
 
 #define SERVER_NAME "Server"
 
@@ -48,44 +47,20 @@ int main(int argc, char** argv)
 
 	{
 		CBitWriter writer((uint32_t*)data, 256);
-
-		writer.WriteBits(6, 3);
-
-		writer.WriteBits(685, 10);
-
-		writer.WriteBits(16099933, 24);
-
-		writer.WriteBits(685, 10);
-
-		writer.WriteBits(174764, 18);
+		for (int i = 0; i < 32; i++)
+		{
+			writer.WriteBits(UINT32_MAX, 32);
+		}
 	}
-
+	
 	{
 		CBitReader reader((uint32_t*)data, 256);
-
-		reader.ReadBits(3);
-
-		reader.ReadBits(10);
-
-		reader.ReadBits(24);
-
-		reader.ReadBits(10);
-
-		reader.ReadBits(18);
-
-		reader.ReadBits(10);
+		for (int i = 0; i < 32; i++)
+		{
+			std::cout << reader.ReadBits(32) << std::endl;
+		}
 	}
-
-
-
-	/*
-	uint32_t* test = (uint32_t*) data;
-
-	for (int i = 0; i < 3; i++)
-	{
-		std::cout << "Word " << i << ":" << test[i] << std::endl;
-	}
-	*/
+	
 
 	system("pause");
 

@@ -104,11 +104,11 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 		}
 
 		// Create mask
-		unsigned mask;
-		mask = (1 << overflowBits) - 1;
+		uint64_t mask;
+		mask = (1ULL << overflowBits) - 1ULL;
 
 		// From the scratch, grab the bits that overflowed.
-		uint32_t overflow = m_scratch & mask;
+		uint64_t overflow = m_scratch & mask;
 
 		// Shift the scratch "overflowBits" to the right, thus removing the
 		// overflow for safe casting to a 32 bit number
