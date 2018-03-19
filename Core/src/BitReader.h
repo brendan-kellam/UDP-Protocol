@@ -16,6 +16,8 @@ private:
 	// Total of number bits read
 	int m_numBitsRead;
 
+	int m_numBytesRead;
+
 	std::ostringstream log;
 
 public:

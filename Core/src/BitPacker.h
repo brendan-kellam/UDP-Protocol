@@ -3,11 +3,21 @@
 
 #include <iostream>
 
-#define WORD_SIZE 32
+#define WORD_SIZE_IN_BITS 32
+#define WORD_SIZE_IN_BYTES 4
 
 class CBitPacker
 {
 protected:
+	//************************************
+	// Method:    CBitPacker
+	// FullName:  CBitPacker::CBitPacker
+	// Access:    protected 
+	// Returns:   
+	// Qualifier:
+	// Parameter: uint32_t * buffer - Buffer to read/write to
+	// Parameter: size_t bufferLen - Length of buffer (IN BYTES)
+	//************************************
 	CBitPacker(uint32_t* buffer, size_t bufferLen);
 
 public:
@@ -21,7 +31,8 @@ protected:
 	// The current number of bits currently in m_scratch
 	int m_scratchBits;
 
-	// Current index in m_buffer
+	// The current index in uin32_t* buffer
+	// NOTE: Steps in m_wordIndex represent 4 byte steps in m_buffer
 	int m_wordIndex;
 
 	// Buffer pointer

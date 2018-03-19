@@ -42,25 +42,37 @@ int main(int argc, char** argv)
 {
 	std::cout << "running.." << std::endl;
 
-	unsigned char data[256];
+	unsigned char data[56];
 
-
+	
 	{
-		CBitWriter writer((uint32_t*)data, 256);
+		CBitWriter writer((uint32_t*)data, sizeof(data));
 		for (int i = 0; i < 32; i++)
 		{
-			writer.WriteBits(UINT32_MAX, 32);
+			writer.WriteBits(10922, 14);
 		}
 	}
 	
 	{
-		CBitReader reader((uint32_t*)data, 256);
-		for (int i = 0; i < 32; i++)
+		CBitReader reader((uint32_t*)data, sizeof(data));
+		for (i = 0; i < 32; i++)
 		{
-			std::cout << reader.ReadBits(32) << std::endl;
+			std::cout << reader.ReadBits(14) << std::endl;
 		}
 	}
 	
+
+	unsigned char test[256];
+	std::cout << test[0] << std::endl;
+
+	uint32_t* t = (uint32_t*)test;
+
+	t[256] = UINT32_MAX;
+
+	std::cout << t[255] << std::endl;
+
+	uint32_t a[10];
+	std::cout << sizeof(data) << std::endl;
 
 	system("pause");
 

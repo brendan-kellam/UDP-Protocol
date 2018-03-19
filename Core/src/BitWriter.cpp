@@ -5,7 +5,8 @@
 #include "Platform.h"
 
 CBitWriter::CBitWriter(uint32_t* buffer, size_t bufferLen)
-	: CBitPacker(buffer, bufferLen)
+	: CBitPacker(buffer, bufferLen),
+	m_numBytesWritten(0)
 {
 	log << "Bit writer running..";
 	CLogManager::Instance().WriteLine(log.str());
@@ -28,8 +29,8 @@ void CBitWriter::FlushScratch()
 	}
 
 	// We can ONLY flush the remaining
-	UDP_TRAP(m_wordIndex < m_bufferLen);
-	UDP_TRAP(m_scratchBits <= WORD_SIZE)
+	UDP_TRAP(m_numBytesWritten < m_bufferLen);
+	UDP_TRAP(m_scratchBits <= WORD_SIZE_IN_BITS)
 	UDP_TRAP(m_scratchBits > 0);
 
 	// Telem
@@ -48,7 +49,7 @@ void CBitWriter::FlushScratch()
 
 void CBitWriter::WriteBits(uint32_t data, const int bits)
 {
-	UDP_TRAP(bits <= WORD_SIZE);
+	UDP_TRAP(bits <= WORD_SIZE_IN_BITS);
 	UDP_TRAP(bits > 0);
 
 
@@ -79,12 +80,11 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 		log.str("");
 	}
 
-
 	// If a overflow is detected
-	if (m_scratchBits > WORD_SIZE)
+	if (m_scratchBits > WORD_SIZE_IN_BITS)
 	{
 		// Ensure the word index is strictly less than the buffer index
-		UDP_TRAP(m_wordIndex < m_bufferLen);
+		UDP_TRAP(m_numBytesWritten < m_bufferLen);
 
 		// Telem
 		{
@@ -94,7 +94,7 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 		}
 
 		// # of bits overflowed
-		int overflowBits = m_scratchBits - WORD_SIZE;
+		int overflowBits = m_scratchBits - WORD_SIZE_IN_BITS;
 
 		// Telem
 		{
@@ -122,7 +122,10 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 		}
 		
 		m_buffer[m_wordIndex] = ((uint32_t)m_scratch);
+		
+		// Increment word index and the number of bytes written
 		m_wordIndex++;
+		m_numBytesWritten += WORD_SIZE_IN_BYTES;
 
 		m_scratch = overflow;
 		m_scratchBits = overflowBits;

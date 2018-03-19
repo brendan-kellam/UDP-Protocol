@@ -5,6 +5,7 @@
 CBitReader::CBitReader(uint32_t* buffer, size_t bufferLen)
 	: CBitPacker(buffer, bufferLen),
 	m_numBitsRead(0),
+	m_numBytesRead(0),
 	m_totalBits(bufferLen * 8)
 {
 	log << "Bit reader running..";
@@ -14,9 +15,9 @@ CBitReader::CBitReader(uint32_t* buffer, size_t bufferLen)
 
 uint32_t CBitReader::ReadBits(const int bits)
 {
-	UDP_TRAP(bits <= WORD_SIZE);
+	UDP_TRAP(bits <= WORD_SIZE_IN_BITS);
 	UDP_TRAP(bits > 0);
-	UDP_TRAP(m_numBitsRead <= m_totalBits);
+	UDP_TRAP(m_numBitsRead < m_totalBits);
 	
 	// Telem
 	{
@@ -32,9 +33,14 @@ uint32_t CBitReader::ReadBits(const int bits)
 		log.str("");
 	}
 
-	// Read in next word
+	// IFF the number of bits requested for a read are
+	// greater than the current number of bits in m_scratch,
+	// we need to read more
 	if (bits > m_scratchBits)
 	{
+		// We can ONLY read if the wordIndex is strictly less than the bufferLength
+		UDP_TRAP(m_numBytesRead < m_bufferLen);
+
 		// Telem
 		{
 			log << "----- Reading in next word: " << m_buffer[m_wordIndex] << " [" << getBits(m_buffer[m_wordIndex]) << "] -----";
@@ -42,14 +48,15 @@ uint32_t CBitReader::ReadBits(const int bits)
 			log.str("");
 		}
 
-		m_scratch <<= WORD_SIZE;
+		m_scratch <<= WORD_SIZE_IN_BITS;
 
-		// We can ONLY read if the wordIndex is strictly less than the bufferLength
-		UDP_TRAP(m_wordIndex < m_bufferLen)
 
 		m_scratch += m_buffer[m_wordIndex];
-		m_scratchBits += WORD_SIZE;
+		m_scratchBits += WORD_SIZE_IN_BITS;
+
+		// Increment word index and the number of bytes read
 		m_wordIndex++;
+		m_numBytesRead += WORD_SIZE_IN_BYTES;
 		
 		// Telem
 		{
@@ -103,6 +110,14 @@ uint32_t CBitReader::ReadBits(const int bits)
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
+
+	// Telem
+	{
+		log << "Current bits read: " << m_numBitsRead;
+		CLogManager::Instance().WriteLine(log.str());
+		log.str("");
+	}
+
 
 	return output;
 }

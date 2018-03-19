@@ -12,6 +12,9 @@ class CBitWriter
 private:
 	std::ostringstream log;
 
+	// The number of bytes written to uint32_t* m_buffer
+	int m_numBytesWritten;
+
 public:
 	
 	
