@@ -44,6 +44,10 @@ int main(int argc, char** argv)
 
 	unsigned char data[56];
 
+	const int MaxElements = 32;
+	const int MaxElementBits = BITS_REQUIRED(0, MaxElements);
+
+	std::cout << "Bits: " << MaxElementBits << std::endl;
 	
 	{
 		CBitWriter writer((uint32_t*)data, sizeof(data));
@@ -55,9 +59,9 @@ int main(int argc, char** argv)
 	
 	{
 		CBitReader reader((uint32_t*)data, sizeof(data));
-		for (i = 0; i < 32; i++)
+		for (int i = 0; i < 32; i++)
 		{
-			std::cout << reader.ReadBits(14) << std::endl;
+			reader.ReadBits(14);
 		}
 	}
 	
