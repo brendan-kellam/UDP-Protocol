@@ -139,6 +139,8 @@
     <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\Socket.h" />
+    <ClInclude Include="src\Stream.h" />
+    <ClInclude Include="src\WriteStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Address.cpp" />
@@ -150,6 +152,7 @@
     <ClCompile Include="src\Packet.cpp" />
     <ClCompile Include="src\Serialize.cpp" />
     <ClCompile Include="src\Socket.cpp" />
+    <ClCompile Include="src\WriteStream.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
