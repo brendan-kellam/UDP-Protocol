@@ -1,8 +1,11 @@
-#pragma once
+#ifndef PACKET_H
+#define PACKET_H
 
 #include <iostream>
 #include <bitset>
 #include <chrono>
+#include "BitWriter.h"
+#include "BitReader.h"
 
 ///////////////////////////PACKET STRUCTURE///////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -97,3 +100,26 @@ private:
 
 
 };
+
+
+const int MaxNumber = 10;
+const int MaxNumberBits = BITS_REQUIRED(0, MaxNumber);
+struct TestPacket
+{
+
+	int myInt;
+
+	void Write(CBitWriter& writer)
+	{
+		writer.WriteBits(myInt, MaxNumberBits);
+	}
+
+	void Read(CBitReader& reader)
+	{
+		reader.ReadBits(MaxNumberBits);
+	}
+
+};
+
+
+#endif /* PACKET_H */

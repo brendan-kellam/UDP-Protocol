@@ -72,18 +72,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\Core\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\Core\</IntDir>
+    <IncludePath>$(ProjectDir)src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\Core\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\Core\</IntDir>
+    <IncludePath>$(ProjectDir)src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\Core\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\Core\</IntDir>
+    <IncludePath>$(ProjectDir)src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\Core\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\Core\</IntDir>
+    <IncludePath>$(ProjectDir)src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,8 +143,9 @@
     <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\Socket.h" />
-    <ClInclude Include="src\Stream.h" />
-    <ClInclude Include="src\WriteStream.h" />
+    <ClInclude Include="src\Stream\ReadStream.h" />
+    <ClInclude Include="src\Stream\Stream.h" />
+    <ClInclude Include="src\Stream\WriteStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Address.cpp" />
@@ -152,7 +157,8 @@
     <ClCompile Include="src\Packet.cpp" />
     <ClCompile Include="src\Serialize.cpp" />
     <ClCompile Include="src\Socket.cpp" />
-    <ClCompile Include="src\WriteStream.cpp" />
+    <ClCompile Include="src\Stream\ReadStream.cpp" />
+    <ClCompile Include="src\Stream\WriteStream.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -78,9 +78,6 @@ int main(int argc, char** argv)
 	uint32_t a[10];
 	std::cout << sizeof(data) << std::endl;
 
-	system("pause");
-
-	/*
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();
 	
@@ -89,7 +86,7 @@ int main(int argc, char** argv)
 
 	CConnectionManager::Instance().ShutDown();
 	CLogManager::Instance().ShutDown();
-	*/
+
 
 	return 0;
 }
