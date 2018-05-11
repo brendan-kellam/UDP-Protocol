@@ -35,7 +35,7 @@ void CBitWriter::FlushScratch()
 
 	// Telem
 	{
-		log << "Writing data int: " << m_scratch << " [" << getBits(m_scratch) << "]";
+		log << "FLUSH WRITE TO BUFFER: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
@@ -55,23 +55,26 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 
 	// Telem
 	{
-		log << "Writing data int: " << data << " [" << getBits(data) << "]";
+		log << "WRITE DATA: " << data << " [" << getBits(data, bits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
 
+	uint64_t temp = data;
+	temp <<= m_scratchBits;
+
 	// Shift 64-bit scratch integer left by 'bits'
-	m_scratch <<= bits;
+	//m_scratch <<= bits;
 
 	// Add data to scratch integer
-	m_scratch += data;
+	m_scratch ^= temp;
 
 	// Increase number of bits for scratchBits
 	m_scratchBits += bits;
 	
 	// Telem
 	{
-		log << "Current status of scratch: " << m_scratch << " [" << getBits(m_scratch) << "]";
+		log << "Current status of scratch: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 
@@ -103,20 +106,29 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 			log.str("");
 		}
 
+		/*
 		// Create mask
 		uint64_t mask;
 		mask = (1ULL << overflowBits) - 1ULL;
 
 		// From the scratch, grab the bits that overflowed.
 		uint64_t overflow = m_scratch & mask;
+		*/
+
+		uint64_t mask;
+		mask = (1ULL << WORD_SIZE_IN_BITS) - 1ULL;
+
+		uint64_t overflow = m_scratch >> WORD_SIZE_IN_BITS;
 
 		// Shift the scratch "overflowBits" to the right, thus removing the
 		// overflow for safe casting to a 32 bit number
-		m_scratch >>= overflowBits;
+		//m_scratch >>= overflowBits;
+
+		m_scratch &= mask;
 
 		// Telem
 		{
-			log << "Writing " << m_scratch << " [" << getBits(m_scratch) << "] to m_buffer";
+			log << "WRITING TO BUFFER: " << m_scratch << " [" << getBits(m_scratch, WORD_SIZE_IN_BITS) << "] to m_buffer";
 			CLogManager::Instance().WriteLine(log.str());
 			log.str("");
 		}
@@ -132,7 +144,7 @@ void CBitWriter::WriteBits(uint32_t data, const int bits)
 			
 		// Telem
 		{
-			log << "New status of scratch: " << m_scratch << " [" << getBits(m_scratch) << "]";
+			log << "New status of scratch: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 			CLogManager::Instance().WriteLine(log.str());
 			log.str("");
 			log << "-----------";

@@ -66,6 +66,8 @@ protected:
 public:
 	virtual ~CBitPacker() {};
 
+	std::string getBits(uint64_t val, int bits);
+
 protected:
 	// 64bit scratch word: Double the word size (32bits)
 	// Used for overflow when writing

@@ -28,7 +28,7 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 	// Telem
 	{
-		log << "Current scratch status: " << m_scratch << " [" << getBits(m_scratch) << "]";
+		log << "Current scratch status: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
@@ -43,15 +43,20 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 		// Telem
 		{
-			log << "----- Reading in next word: " << m_buffer[m_wordIndex] << " [" << getBits(m_buffer[m_wordIndex]) << "] -----";
+			log << "Reading in next word: " << m_buffer[m_wordIndex] << " [" << getBits(m_buffer[m_wordIndex], WORD_SIZE_IN_BITS) << "] -----";
 			CLogManager::Instance().WriteLine(log.str());
 			log.str("");
 		}
 
-		m_scratch <<= WORD_SIZE_IN_BITS;
+		//m_scratch <<= WORD_SIZE_IN_BITS;
+
+		uint64_t nextWord = m_buffer[m_wordIndex];
+		nextWord <<= m_scratchBits;
+
+		m_scratch ^= nextWord;
 
 		// Read in the next 32-bit number
-		m_scratch += m_buffer[m_wordIndex];
+		//m_scratch += m_buffer[m_wordIndex];
 
 		m_scratchBits += WORD_SIZE_IN_BITS;
 
@@ -61,7 +66,7 @@ uint32_t CBitReader::ReadBits(const int bits)
 		
 		// Telem
 		{
-			log << "Scratch: " << m_scratch << " [" << getBits(m_scratch) << "]";
+			log << "Scratch: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 			CLogManager::Instance().WriteLine(log.str());
 			log.str("");
 		}
@@ -93,11 +98,15 @@ uint32_t CBitReader::ReadBits(const int bits)
 	* 110 & 111 = 110
 	* => output = 110 [6]
 	*/
-	uint32_t output = (m_scratch >> remainingBits) & mask;
+	//uint32_t output = (m_scratch >> remainingBits) & mask;
+
+	uint32_t output = m_scratch & mask;
 	
 	// Grab remaining bits
-	mask = (1ULL << remainingBits) - 1ULL;
-	m_scratch &= mask;
+	//mask = (1ULL << remainingBits) - 1ULL;
+	//m_scratch &= mask;
+
+	m_scratch >>= bits;
 
 	// Set scratch to remaining
 	m_scratchBits = remainingBits;
@@ -107,7 +116,7 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 	// Telem
 	{
-		log << "Read: " << output << " [" << getBits(output) << "]";
+		log << "READ DATA: " << output << " [" << getBits(output, bits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}

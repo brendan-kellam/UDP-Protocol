@@ -2,9 +2,11 @@
 #include <algorithm>
 #include <deque>
 #include <bitset>
+#include <vector>
 #include "ConnectionManager.h"
 #include "LogManager.h"
 #include "Serialize.h"
+#include "BitPacker.h"
 #include "BitWriter.h"
 #include "BitReader.h"
 #include "Stream/ReadStream.h"
@@ -44,25 +46,29 @@ int main(int argc, char** argv)
 	std::cout << "running.." << std::endl;
 
 	unsigned char data[56];
-
-	const int MaxElements = 32;
-	const int MaxElementBits = BITS_REQUIRED(0, MaxElements);
-
-	std::cout << "Bits: " << MaxElementBits << std::endl;
 	
+	std::srand((unsigned)time(0));
+	
+	
+
 	{
 		CBitWriter writer((uint32_t*)data, sizeof(data));
-		for (int i = 0; i < 2; i++)
+
+		std::cout << writer.getBits(203, 32) << std::endl;
+		
+		for (int i = 0; i < 10; i++)
 		{
-			writer.WriteBits(10922, 14);
+			int  num = (rand() % 500);
+			writer.WriteBits(num, bitsRequired(0, 500));
 		}
 	}
 	
 	{
 		CBitReader reader((uint32_t*)data, sizeof(data));
-		for (int i = 0; i < 2; i++)
+		
+		for (int i = 0; i < 10; i++)
 		{
-			reader.ReadBits(14);
+			reader.ReadBits(bitsRequired(0, 500));
 		}
 	}
 	
@@ -84,6 +90,8 @@ int main(int argc, char** argv)
 	uint32_t val = 2;
 	uint32_t minimum = 0;
 	uint32_t maximum = 10;
+
+	system("pause");
 	
 	/*
 	{

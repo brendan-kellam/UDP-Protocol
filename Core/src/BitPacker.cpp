@@ -32,6 +32,31 @@ std::string CBitPacker::getBits(uint64_t val)
 	return g;
 }
 
+std::string CBitPacker::getBits(uint64_t val, int bits)
+{
+
+	int remainingBits = bits;
+	std::string g;
+	while (val != 0)
+	{
+		g += std::to_string((val % 2 != 0));
+
+		val /= 2;
+
+		remainingBits--;
+	}
+
+	for (int i = 0; i < remainingBits; i++)
+	{
+		g += std::string("0");
+	}
+
+	std::reverse(g.begin(), g.end());
+
+	return g;
+}
+
+
 uint32_t bitsRequired(uint32_t min, uint32_t max)
 {
 	if (min == max) return 0;
