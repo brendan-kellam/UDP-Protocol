@@ -2,6 +2,7 @@
 #define BITPACKER_H
 
 #include <iostream>
+#include <math.h>
 
 #define WORD_SIZE_IN_BITS 32
 #define WORD_SIZE_IN_BYTES 4
@@ -44,6 +45,9 @@ struct BitsRequired
 
 #define BITS_REQUIRED( min, max ) BitsRequired<min,max>::result
 // ---
+
+
+uint32_t bitsRequired(uint32_t min, uint32_t max);
 
 class CBitPacker
 {

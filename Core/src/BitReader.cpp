@@ -50,8 +50,9 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 		m_scratch <<= WORD_SIZE_IN_BITS;
 
-
+		// Read in the next 32-bit number
 		m_scratch += m_buffer[m_wordIndex];
+
 		m_scratchBits += WORD_SIZE_IN_BITS;
 
 		// Increment word index and the number of bytes read

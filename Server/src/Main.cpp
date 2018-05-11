@@ -7,6 +7,9 @@
 #include "Serialize.h"
 #include "BitWriter.h"
 #include "BitReader.h"
+#include "Stream/ReadStream.h"
+#include "Stream/WriteStream.h"
+#include "Stream/Stream.h"
 
 #define SERVER_NAME "Server"
 
@@ -36,8 +39,6 @@ void DeserializeUInt(unsigned char* buffer, unsigned int &value)
 		| buffer[3];
 }
 
-
-
 int main(int argc, char** argv)
 {
 	std::cout << "running.." << std::endl;
@@ -51,7 +52,7 @@ int main(int argc, char** argv)
 	
 	{
 		CBitWriter writer((uint32_t*)data, sizeof(data));
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			writer.WriteBits(10922, 14);
 		}
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
 	
 	{
 		CBitReader reader((uint32_t*)data, sizeof(data));
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			reader.ReadBits(14);
 		}
@@ -78,6 +79,26 @@ int main(int argc, char** argv)
 	uint32_t a[10];
 	std::cout << sizeof(data) << std::endl;
 
+	uint8_t buf[4];
+
+	uint32_t val = 2;
+	uint32_t minimum = 0;
+	uint32_t maximum = 10;
+	
+	/*
+	{
+		CWriteStream writeStream(buf, sizeof(buf));
+		serialize_int(writeStream, val, minimum, maximum);
+	}
+	uint32_t result;
+
+	{
+		CReadStream readStream(buf, sizeof(buf));
+		serialize_int(readStream, result, minimum, maximum);
+	}
+
+	std::cout << "RESULT: " << result << std::endl;
+
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();
 	
@@ -86,7 +107,7 @@ int main(int argc, char** argv)
 
 	CConnectionManager::Instance().ShutDown();
 	CLogManager::Instance().ShutDown();
-
+	*/
 
 	return 0;
 }

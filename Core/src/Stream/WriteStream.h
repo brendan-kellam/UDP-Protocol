@@ -6,11 +6,14 @@
 #include <iostream>
 
 class CWriteStream
-	: public IStream
+	: public Stream::IStream
 {
 
 public: 
-	
+
+	enum { IsWriting = 1 };
+	enum { IsReading = 0 };
+
 	//************************************
 	// Method:    CWriteStream
 	// FullName:  CWriteStream::CWriteStream

@@ -13,9 +13,9 @@ bool CWriteStream::SerializeInteger(int32_t val, int32_t min, int32_t max)
 	uint32_t uval = val - min;
 	
 	// Determine the # of required bits
-	const int bits = floor(log2(uval)) + 1;
+	const int bits = bitsRequired(min, max);
 
-	// Write bits to the
+	// Write bits
 	m_writer.WriteBits(uval, bits);
 
 	return true;
