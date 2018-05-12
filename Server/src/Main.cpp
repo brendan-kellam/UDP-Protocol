@@ -3,6 +3,7 @@
 #include <deque>
 #include <bitset>
 #include <vector>
+#include "Platform.h"
 #include "ConnectionManager.h"
 #include "LogManager.h"
 #include "Serialize.h"
@@ -45,33 +46,47 @@ int main(int argc, char** argv)
 {
 	std::cout << "running.." << std::endl;
 
-	unsigned char data[56];
+	const int dataSizeInBytes = 2048;
+	const int numToWrite = dataSizeInBytes / 4;
+
+	unsigned char data[dataSizeInBytes];
+
+	uint32_t numbers[numToWrite];
+
+	uint32_t outputNumbers[numToWrite];
 	
 	std::srand((unsigned)time(0));
 	
-	
+	for (int i = 0; i < numToWrite; i++)
+	{
+		numbers[i] = (rand() % UINT32_MAX);
+	}
 
 	{
 		CBitWriter writer((uint32_t*)data, sizeof(data));
 
 		std::cout << writer.getBits(203, 32) << std::endl;
 		
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < numToWrite; i++)
 		{
-			int  num = (rand() % 500);
-			writer.WriteBits(num, bitsRequired(0, 500));
+			writer.WriteBits(numbers[i], bitsRequired(0, UINT32_MAX));
 		}
 	}
 	
 	{
 		CBitReader reader((uint32_t*)data, sizeof(data));
 		
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < numToWrite; i++)
 		{
-			reader.ReadBits(bitsRequired(0, 500));
+			uint32_t num = reader.ReadBits(bitsRequired(0, UINT32_MAX));
+			outputNumbers[i] = num;
 		}
 	}
-	
+
+	for (int i = 0; i < numToWrite; i++)
+	{
+		UDP_TRAP(numbers[i] == outputNumbers[i]);
+	}
 
 	unsigned char test[256];
 	std::cout << test[0] << std::endl;
