@@ -57,9 +57,4 @@ std::string CBitPacker::getBits(uint64_t val, int bits)
 }
 
 
-uint32_t bitsRequired(uint32_t min, uint32_t max)
-{
-	if (min == max) return 0;
-	uint32_t uval = max - min;
-	return uint32_t(floor((log2(uval)))) + 1;
-}
+

@@ -7,47 +7,34 @@
 #define WORD_SIZE_IN_BITS 32
 #define WORD_SIZE_IN_BYTES 4
 
-// --- meta programming to determine the # of required bits to represent a decimal number ---
-// From: https://gafferongames.com/post/reading_and_writing_packets/
-template <uint32_t x> 
-struct PopCount
+inline uint32_t popcount(uint32_t x)
 {
-	enum {
-		a = x - ((x >> 1) & 0x55555555),
-		b = (((a >> 2) & 0x33333333) + (a & 0x33333333)),
-		c = (((b >> 4) + b) & 0x0f0f0f0f),
-		d = c + (c >> 8),
-		e = d + (d >> 16),
-		result = e & 0x0000003f
-	};
-};
+	const uint32_t a = x - ((x >> 1) & 0x55555555);
+	const uint32_t b = (((a >> 2) & 0x33333333) + (a & 0x33333333));
+	const uint32_t c = (((b >> 4) + b) & 0x0f0f0f0f);
+	const uint32_t d = c + (c >> 8);
+	const uint32_t e = d + (d >> 16);
+	const uint32_t result = e & 0x0000003f;
+	return result;
+}
 
-template <uint32_t x> 
-struct Log2
+inline uint32_t log2(uint32_t x)
 {
-	enum {
-		a = x | (x >> 1),
-		b = a | (a >> 2),
-		c = b | (b >> 4),
-		d = c | (c >> 8),
-		e = d | (d >> 16),
-		f = e >> 1,
-		result = PopCount<f>::result
-	};
-};
+	const uint32_t a = x | (x >> 1);
+	const uint32_t b = a | (a >> 2);
+	const uint32_t c = b | (b >> 4);
+	const uint32_t d = c | (c >> 8);
+	const uint32_t e = d | (d >> 16);
+	const uint32_t f = e >> 1;
+	return popcount(f);
+}
 
-template <int64_t min, int64_t max> 
-struct BitsRequired
+
+inline uint32_t bitsRequired(uint32_t min, uint32_t max)
 {
-	static const uint32_t result =
-		(min == max) ? 0 : (Log2<uint32_t(max - min)>::result + 1);
-};
-
-#define BITS_REQUIRED( min, max ) BitsRequired<min,max>::result
-// ---
-
-
-uint32_t bitsRequired(uint32_t min, uint32_t max);
+	if (min == max) return 0;
+	return uint32_t(floor((log2(max - min)))) + 1;
+}
 
 class CBitPacker
 {

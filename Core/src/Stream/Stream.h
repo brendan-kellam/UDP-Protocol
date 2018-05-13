@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include <math.h>
 #include <iostream>
+#include <vector>
 
 /*
 From Gaffer on Games Article: https://gafferongames.com/post/serialization_strategies/
@@ -74,6 +75,14 @@ bool serialize_float_internal(Stream& stream, float& value)
 	}
 
 	return result;
+}
+
+template <typename Stream>
+bool serialize_vector_internal(Stream& stream, std::vector<float>& vector)
+{
+
+
+	return true;
 }
 
 namespace Stream
