@@ -17,11 +17,7 @@ public:
 		: m_reader((uint32_t*)buffer, bytes) {}
 
 	bool SerializeInteger(int32_t& val, int32_t min, int32_t max);
-
-	bool test(CReadStream readStream, uint32_t val, uint32_t min, uint32_t max)
-	{
-		serialize_int(readStream, val, min, max);
-	}
+	bool SerializeBits(uint32_t& val, const int bits);
 
 private:
 	CBitReader m_reader;

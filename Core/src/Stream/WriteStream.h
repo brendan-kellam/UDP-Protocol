@@ -26,6 +26,7 @@ public:
 		: m_writer((uint32_t*) buffer, bytes) {}
 
 	bool SerializeInteger(int32_t val, int32_t min, int32_t max);
+	bool SerializeBits(uint32_t val, const int bits);
 
 private:
 	CBitWriter m_writer;

@@ -101,25 +101,4 @@ private:
 
 };
 
-
-const int MaxNumber = 10;
-const int MaxNumberBits = BITS_REQUIRED(0, MaxNumber);
-struct TestPacket
-{
-
-	int myInt;
-
-	void Write(CBitWriter& writer)
-	{
-		writer.WriteBits(myInt, MaxNumberBits);
-	}
-
-	void Read(CBitReader& reader)
-	{
-		reader.ReadBits(MaxNumberBits);
-	}
-
-};
-
-
 #endif /* PACKET_H */

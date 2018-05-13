@@ -48,8 +48,6 @@ uint32_t CBitReader::ReadBits(const int bits)
 			log.str("");
 		}
 
-		//m_scratch <<= WORD_SIZE_IN_BITS;
-
 		uint64_t nextWord = m_buffer[m_wordIndex];
 		nextWord <<= m_scratchBits;
 
@@ -98,14 +96,9 @@ uint32_t CBitReader::ReadBits(const int bits)
 	* 110 & 111 = 110
 	* => output = 110 [6]
 	*/
-	//uint32_t output = (m_scratch >> remainingBits) & mask;
 
 	uint32_t output = m_scratch & mask;
 	
-	// Grab remaining bits
-	//mask = (1ULL << remainingBits) - 1ULL;
-	//m_scratch &= mask;
-
 	m_scratch >>= bits;
 
 	// Set scratch to remaining
@@ -130,4 +123,9 @@ uint32_t CBitReader::ReadBits(const int bits)
 
 
 	return output;
+}
+
+bool CBitReader::WouldReadPastEnd(const int bits)
+{
+	return (m_numBitsRead + bits) > m_totalBits;
 }

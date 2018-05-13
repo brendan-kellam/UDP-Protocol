@@ -16,7 +16,13 @@ bool CWriteStream::SerializeInteger(int32_t val, int32_t min, int32_t max)
 	const int bits = bitsRequired(min, max);
 
 	// Write bits
-	m_writer.WriteBits(uval, bits);
+	SerializeBits(uval, bits);
 
+	return true;
+}
+
+bool CWriteStream::SerializeBits(uint32_t val, const int bits)
+{
+	m_writer.WriteBits(val, bits);
 	return true;
 }

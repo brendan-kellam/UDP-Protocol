@@ -8,11 +8,23 @@ bool CReadStream::SerializeInteger(int32_t& val, int32_t min, int32_t max)
 	// Determine the # of required bits
 	const int bits = bitsRequired(min, max);
 
-	// Read bits
-	uint32_t uval = m_reader.ReadBits(bits);
+	if (m_reader.WouldReadPastEnd(bits))
+	{
+		return false;
+	}
 
+	// Read bits
+	uint32_t uval;
+	SerializeBits(uval, bits);
+
+	// Shift value back into scale
 	val = (int32_t)uval + min;
 
+	return true;
+}
 
+bool CReadStream::SerializeBits(uint32_t& val, const int bits)
+{
+	val = m_reader.ReadBits(bits);
 	return true;
 }

@@ -35,6 +35,8 @@ public:
 
 	uint32_t ReadBits(const int bits);
 
+	bool WouldReadPastEnd(const int bits);
+
 };
 
 #endif

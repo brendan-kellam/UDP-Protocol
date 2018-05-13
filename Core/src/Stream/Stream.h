@@ -2,6 +2,8 @@
 #define STREAM_H
 
 #include "Platform.h"
+#include <math.h>
+#include <iostream>
 
 /*
 From Gaffer on Games Article: https://gafferongames.com/post/serialization_strategies/
@@ -11,6 +13,7 @@ They're actually macros that return false on error, thus unwinding the
 stack in case of error, without the need for exceptions."
 */
 
+// Serialize integer in given range (min, max)
 #define serialize_int( stream, value, min, max )                    \
 	do                                                              \
 	{                                                               \
@@ -24,6 +27,7 @@ stack in case of error, without the need for exceptions."
 		}                                                           \
 		if ( !stream.SerializeInteger( int32_value, min, max ) )    \
 		{                                                           \
+			std::cout << "Serialization issue" << std::endl;		\
 			return false;                                           \
 		}                                                           \
 		if ( stream.IsReading )                                     \
@@ -31,15 +35,54 @@ stack in case of error, without the need for exceptions."
 			value = int32_value;                                    \
 			if ( value < min || value > max )                       \
 			{                                                       \
+				std::cout << "Serialization range issue" << std::endl;\
 				return false;                                       \
 			}                                                       \
 		}                                                           \
 		} while (0)
 
+#define serialize_float( stream, value )							\
+	do																\
+	{																\
+		if ( !serialize_float_internal( stream, value ) )			\
+		{															\
+			return false;											\
+		}															\
+		} while(0)
+
+
+template <typename Stream>
+bool serialize_float_internal(Stream& stream, float& value)
+{
+	union FloatInt
+	{
+		float float_value;
+		uint32_t int_value;
+	};
+
+	FloatInt tmp;
+	if (stream.IsWriting)
+	{
+		tmp.float_value = value; 
+	}
+
+	bool result = stream.SerializeBits(tmp.int_value, 32);
+	
+	if (stream.IsReading)
+	{
+		value = tmp.float_value;
+	}
+
+	return result;
+}
+
 namespace Stream
 {
 	class IStream
-	{ };
+	{
+	public: 
+		virtual ~IStream() {}
+	};
 }
 
 #endif
