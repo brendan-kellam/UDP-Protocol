@@ -26,3 +26,8 @@ bool CWriteStream::SerializeBits(uint32_t val, const int bits)
 	m_writer.WriteBits(val, bits);
 	return true;
 }
+
+void CWriteStream::Flush()
+{
+	m_writer.FlushScratch();
+}

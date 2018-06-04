@@ -15,6 +15,8 @@
 #include "Stream/ReadStream.h"
 #include "Stream/WriteStream.h"
 #include "Stream/Stream.h"
+#include "Serializable.h"
+#include "Util/SequenceBuffer.h"
 
 #define SERVER_NAME "Server"
 
@@ -27,20 +29,41 @@ int main(int argc, char** argv)
 	uint8_t data[dataSizeInBytes];
 
 	{
-		CWriteStream writeStream(data, dataSizeInBytes);
-		float val = 10.000002f;
-		std::cout << std::fixed << std::setprecision(6) << val << std::endl;
-		serialize_float(writeStream, val);
+		uint8_t transmissionBuf[16];
+
+		CWriteStream writeStream(transmissionBuf, 16);
+		CReadStream readStream(transmissionBuf, 16);
+
+		CMessage msgSend;
+		CMessage msgRecv;
+
+		// --- PEER A ---
+
+		msgSend.SetMessage(7);
+
+		msgSend.Serialize(writeStream);
+		writeStream.Flush();
+		
+		// --- PEER B ---
+
+		msgRecv.Serialize(readStream);
+
+		std::cout << "Message: " << msgRecv.GetMessage() << std::endl;
 	}
 
-	float val;
+	CSequenceBuffer<int> myBuf(10);
+
+	for (uint16_t i = 0; i < 5; i++)
 	{
-		CReadStream readStream(data, dataSizeInBytes);
-		serialize_float(readStream, val);
+		int s = 10;
+		*myBuf.Insert(i) = s;
 	}
 	
-	std::cout << std::fixed << std::setprecision(6) << val << std::endl;
+	std::cout << *myBuf.Find(3) << std::endl;
 
+
+	system("pause");
+		/*
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();
 	
@@ -49,51 +72,7 @@ int main(int argc, char** argv)
 	CConnectionManager::Instance().ShutDown();
 	CLogManager::Instance().ShutDown();
 
+	*/
+
 	return 0;
 }
-
-/*
-const int dataSizeInBytes = 8000;
-const int maxNumber = 255;
-const int numToWrite = dataSizeInBytes;
-
-unsigned char data[dataSizeInBytes];
-
-uint32_t numbers[numToWrite];
-uint32_t outputNumbers[numToWrite];
-
-std::srand((unsigned)time(0));
-
-for (int i = 0; i < numToWrite; i++)
-{
-numbers[i] = (rand() % maxNumber);
-}
-
-{
-CWriteStream writeStream(data, dataSizeInBytes);
-
-for (int i = 0; i < numToWrite; i++)
-{
-serialize_int(writeStream, numbers[i], 0, maxNumber);
-}
-}
-
-{
-CReadStream readStream(data, dataSizeInBytes);
-
-for (int i = 0; i < numToWrite; i++)
-{
-uint32_t num;
-serialize_int(readStream, num, 0, maxNumber);
-outputNumbers[i] = num;
-}
-}
-
-for (int i = 0; i < numToWrite; i++)
-{
-UDP_TRAP(numbers[i] == outputNumbers[i]);
-}
-
-std::cout << "Serialization test done." << std::endl;
-
-*/

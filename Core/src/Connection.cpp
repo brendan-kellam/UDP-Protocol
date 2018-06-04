@@ -30,7 +30,7 @@ CAddress& CConnection::GetAddress() const
 }
 
 
-// TODO: Possbily remove
+// TODO: Possibly remove
 void CConnection::ReceivePacket(CPacket& packet)
 {
 

@@ -15,7 +15,7 @@ CBitWriter::CBitWriter(uint32_t* buffer, size_t bufferLen)
 
 CBitWriter::~CBitWriter()
 {
-	FlushScratch();
+	//FlushScratch();
 }
 
 

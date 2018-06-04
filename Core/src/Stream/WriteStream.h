@@ -28,6 +28,8 @@ public:
 	bool SerializeInteger(int32_t val, int32_t min, int32_t max);
 	bool SerializeBits(uint32_t val, const int bits);
 
+	void Flush();
+
 private:
 	CBitWriter m_writer;
 };

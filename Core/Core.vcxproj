@@ -140,12 +140,14 @@
     <ClInclude Include="src\Manager.h" />
     <ClInclude Include="src\Packet.h" />
     <ClInclude Include="src\Platform.h" />
+    <ClInclude Include="src\Serializable.h" />
     <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\Socket.h" />
     <ClInclude Include="src\Stream\ReadStream.h" />
     <ClInclude Include="src\Stream\Stream.h" />
     <ClInclude Include="src\Stream\WriteStream.h" />
+    <ClInclude Include="src\Util\SequenceBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Address.cpp" />
