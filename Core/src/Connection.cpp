@@ -31,8 +31,17 @@ CAddress& CConnection::GetAddress() const
 
 
 // TODO: Possibly remove
-void CConnection::ReceivePacket(CPacket& packet)
+bool CConnection::Receive(unsigned char* buffer, size_t size)
 {
+	CPacket packet;
+	memcpy(packet.GetBuffer(), buffer, size);
+
+	if (!packet.DeconstructPacket())
+	{
+		return false;
+	}
+
+	std::cout << "Message: " << packet.GetPayload() << std::endl;
 
 	// Add packet to IN-QUEUE
 	m_in.push_back(packet);
@@ -125,6 +134,7 @@ void CConnection::ReceivePacket(CPacket& packet)
 	LogQueueStatus(std::string("Out-Queue"), m_out);
 	LogQueueStatus(std::string("In-Queue"), m_in);
 
+	return true;
 }
 
 // Send payload to this connection. 

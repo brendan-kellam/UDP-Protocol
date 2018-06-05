@@ -62,8 +62,6 @@ int main(int argc, char** argv)
 	std::cout << *myBuf.Find(3) << std::endl;
 
 
-	system("pause");
-		/*
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();
 	
@@ -71,8 +69,6 @@ int main(int argc, char** argv)
 
 	CConnectionManager::Instance().ShutDown();
 	CLogManager::Instance().ShutDown();
-
-	*/
 
 	return 0;
 }

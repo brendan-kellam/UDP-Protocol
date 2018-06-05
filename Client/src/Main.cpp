@@ -34,7 +34,6 @@ int main()
 	memset(payload, '\0', PAYLOAD_SIZE);
 	
 	
-	CPacket packet;
 	CAddress from;
 
 	std::ifstream file("input.txt");
@@ -45,6 +44,8 @@ int main()
 	
 	std::srand((unsigned)time(0));
 	int dur = (rand() % 500) + 1;
+
+	void* tempBuf[PACKET_SIZE];
 
 	while (true)
 	{
@@ -58,13 +59,14 @@ int main()
 		if (duration > dur)
 		{
 
-			int bytesRead = sock.Receive(from, packet.GetBuffer(), PACKET_SIZE);
+			int bytesRead = sock.Receive(from, tempBuf , PACKET_SIZE);
 			if (bytesRead > 0)
 			{
 
-				if (packet.DeconstructPacket())
+				// Check if packet can be received without error
+				if (!myConnection.Receive((unsigned char*)tempBuf, PACKET_SIZE))
 				{
-					myConnection.ReceivePacket(packet);
+					continue;
 				}
 
 			}

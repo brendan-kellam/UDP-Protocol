@@ -94,3 +94,22 @@ bool CPacket::DeconstructPacket()
 	// Return true if protocol ID's match
 	return CPacket::ms_protocolID == remoteProtocolId;
 }
+
+
+template <typename Stream>
+bool CPacket::SerializeInternal(Stream& stream)
+{
+	//serialize_int(stream, CPacket::ms_protocolID, 0, )
+	return true;
+}
+
+
+bool CPacket::Serialize(CReadStream& stream)
+{
+	return SerializeInternal(stream);
+}
+
+bool CPacket::Serialize(CWriteStream& stream)
+{
+	return SerializeInternal(stream);
+}

@@ -52,8 +52,7 @@ public:
 	void Update();
 
 	bool Send(unsigned char payload[PAYLOAD_SIZE], bool SPL = false);
-
-	void ReceivePacket(CPacket& packet);
+	bool Receive(unsigned char* buffer, size_t size);
 
 private:
 

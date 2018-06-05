@@ -6,6 +6,7 @@
 #include <chrono>
 #include "BitWriter.h"
 #include "BitReader.h"
+#include "Serializable.h"
 
 ///////////////////////////PACKET STRUCTURE///////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -32,10 +33,14 @@
 
 
 class CPacket
+	: public ISerializable
 {
 
 private: 
 	typedef std::chrono::steady_clock::time_point timePoint;
+
+	template <typename Stream>
+	bool SerializeInternal(Stream& stream);
 
 public:
 
@@ -71,6 +76,9 @@ public:
 	{
 		return this->GetID() == packet.GetID();
 	}
+
+	virtual bool Serialize(CReadStream& stream) override;
+	virtual bool Serialize(CWriteStream& stream) override;
 
 protected:
 
