@@ -2,7 +2,8 @@
 #include "Serialize.h"
 
 CPacket::CPacket(uint16_t lsn, uint16_t rsn, uint32_t pab)
-	: m_id(lsn),
+	: m_protocolID(ms_protocolID),
+	m_id(lsn),
 	m_ack(rsn),
 	m_ackBitfieldInt(pab),
 	m_isAcked(false)
@@ -99,7 +100,11 @@ bool CPacket::DeconstructPacket()
 template <typename Stream>
 bool CPacket::SerializeInternal(Stream& stream)
 {
-	//serialize_int(stream, CPacket::ms_protocolID, 0, )
+	serialize_bits(stream, m_protocolID, 32);
+	serialize_bits(stream, m_id, 16);
+	serialize_bits(stream, m_ack, 16);
+	serialize_bits(stream, m_ackBitfieldInt, 32);
+
 	return true;
 }
 

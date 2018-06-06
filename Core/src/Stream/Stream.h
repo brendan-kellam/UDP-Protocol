@@ -42,6 +42,29 @@ stack in case of error, without the need for exceptions."
 		}                                                           \
 		} while (0)
 
+#define serialize_bits( stream, value, bits )						\
+	do																\
+	{																\
+		uint32_t uint32_value;										\
+		if ( Stream::IsWriting )									\
+		{															\
+			UDP_TRAP( value > 0 );									\
+			uint32_value = (uint32_t) value;						\
+		}															\
+		if ( !stream.SerializeBits( uint32_value, bits ) )			\
+		{															\
+			return false;											\
+		}															\
+		if ( Stream::IsReading )									\
+		{															\
+			value = uint32_value;									\
+			if ( value < 0 )										\
+			{														\
+				return false;										\
+			}														\
+		}															\
+	} while (0)
+
 #define serialize_float( stream, value )							\
 	do																\
 	{																\

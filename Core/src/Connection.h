@@ -9,6 +9,7 @@
 #include "Address.h"
 #include "Packet.h"
 #include "Socket.h"
+#include "Message.h"
 
 #define STEADY_CLOCK_NOW std::chrono::steady_clock::now()
 #define UINT16_HALF 32768
@@ -51,7 +52,7 @@ public:
 
 	void Update();
 
-	bool Send(unsigned char payload[PAYLOAD_SIZE], bool SPL = false);
+	bool Send(CMessage& message, bool SPL = false);
 	bool Receive(unsigned char* buffer, size_t size);
 
 private:

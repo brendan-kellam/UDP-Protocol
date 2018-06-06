@@ -71,6 +71,8 @@ public:
 	uint16_t GetID() const					{ return m_id; }
 	uint16_t GetAck() const					{ return m_ack; }
 	uint32_t GetAckBitfieldInt() const		{ return m_ackBitfieldInt; }
+	
+	bool IsValidProtocolID() const			{ return m_protocolID == ms_protocolID; }
 
 	bool operator==(const CPacket & packet) const
 	{
@@ -90,6 +92,9 @@ protected:
 
 	// ACK Bitfield - unsigned integer form
 	uint32_t m_ackBitfieldInt;
+
+	// Protocol id -- ID for this protocol
+	uint32_t m_protocolID;
 
 	// ACK Bitfield
 	//std::bitset<BITFIELD_SIZE> m_bitfield;

@@ -1,6 +1,8 @@
 #include "Connection.h"
 #include <algorithm>
 #include "LogManager.h"
+#include "Stream/WriteStream.h"
+#include "Stream/ReadStream.h"
 
 CConnection::CConnection(CAddress& address, CSocket& socket)
 	: m_address(address),
@@ -34,14 +36,18 @@ CAddress& CConnection::GetAddress() const
 bool CConnection::Receive(unsigned char* buffer, size_t size)
 {
 	CPacket packet;
+
 	memcpy(packet.GetBuffer(), buffer, size);
+
+	CReadStream stream(buffer, size);
+	packet.Serialize(stream);
 
 	if (!packet.DeconstructPacket())
 	{
 		return false;
 	}
 
-	std::cout << "Message: " << packet.GetPayload() << std::endl;
+	//std::cout << "Message: " << packet.GetPayload() << std::endl;
 
 	// Add packet to IN-QUEUE
 	m_in.push_back(packet);
@@ -139,7 +145,7 @@ bool CConnection::Receive(unsigned char* buffer, size_t size)
 
 // Send payload to this connection. 
 // NOTE: SPL (simulated packet loss) SHOULD ONLY BE SET FOR TESTING PURPOSES (duh...)
-bool CConnection::Send(unsigned char payload[PAYLOAD_SIZE], bool SPL /* = false */)
+bool CConnection::Send(CMessage& message, bool SPL /* = false */)
 {
 
 	// Increment local sequence number
@@ -171,9 +177,13 @@ bool CConnection::Send(unsigned char payload[PAYLOAD_SIZE], bool SPL /* = false 
 
 	// Create a new packet
 	CPacket packet(m_localSequenceNum, m_remoteSequenceNum, ackBitfieldInt);
-	
-	// Construct packet
-	if (!packet.ConstructPacket(payload))
+
+	CWriteStream stream(packet.GetBuffer(), PACKET_SIZE);
+	packet.Serialize(stream);
+	message.Serialize(stream);
+
+	// Protocol ID should never be invalid on write
+	if (!packet.IsValidProtocolID())
 	{
 		// if error occurs while constructing
 		return false;
