@@ -8,7 +8,6 @@
 #include "Platform.h"
 #include "ConnectionManager.h"
 #include "LogManager.h"
-#include "Serialize.h"
 #include "BitPacker.h"
 #include "BitWriter.h"
 #include "BitReader.h"
