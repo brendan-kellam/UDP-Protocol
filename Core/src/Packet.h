@@ -6,6 +6,7 @@
 #include <chrono>
 #include "BitWriter.h"
 #include "BitReader.h"
+#include "Serializable.h"
 
 ///////////////////////////PACKET STRUCTURE///////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -32,10 +33,14 @@
 
 
 class CPacket
+	: public ISerializable
 {
 
 private: 
 	typedef std::chrono::steady_clock::time_point timePoint;
+
+	template <typename Stream>
+	bool SerializeInternal(Stream& stream);
 
 public:
 
@@ -66,11 +71,16 @@ public:
 	uint16_t GetID() const					{ return m_id; }
 	uint16_t GetAck() const					{ return m_ack; }
 	uint32_t GetAckBitfieldInt() const		{ return m_ackBitfieldInt; }
+	
+	bool IsValidProtocolID() const			{ return m_remoteProtocolID == m_protocolID; }
 
 	bool operator==(const CPacket & packet) const
 	{
 		return this->GetID() == packet.GetID();
 	}
+
+	virtual bool Serialize(CReadStream& stream) override;
+	virtual bool Serialize(CWriteStream& stream) override;
 
 protected:
 
@@ -82,6 +92,9 @@ protected:
 
 	// ACK Bitfield - unsigned integer form
 	uint32_t m_ackBitfieldInt;
+
+	// Protocol id -- ID for this protocol
+	uint32_t m_remoteProtocolID;
 
 	// ACK Bitfield
 	//std::bitset<BITFIELD_SIZE> m_bitfield;
@@ -96,7 +109,7 @@ private:
 
 	unsigned char m_buffer[PACKET_SIZE];
 
-	uint32_t ms_protocolID = static_cast<uint32_t>(std::hash<std::string>()("Eros"));
+	uint32_t m_protocolID;
 
 
 };

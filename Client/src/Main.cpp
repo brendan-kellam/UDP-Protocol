@@ -8,6 +8,7 @@
 #include "Connection.h"
 #include "Address.h"
 #include "Socket.h"
+#include "Message.h"
 #include <WinSock2.h>
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
@@ -34,7 +35,6 @@ int main()
 	memset(payload, '\0', PAYLOAD_SIZE);
 	
 	
-	CPacket packet;
 	CAddress from;
 
 	std::ifstream file("input.txt");
@@ -44,7 +44,11 @@ int main()
 	int count = 0;
 	
 	std::srand((unsigned)time(0));
-	int dur = (rand() % 500) + 1;
+	int dur = (rand() % 200) + 1;
+
+	void* tempBuf[PACKET_SIZE];
+
+	CSimpleMessage replyMessage;
 
 	while (true)
 	{
@@ -58,13 +62,14 @@ int main()
 		if (duration > dur)
 		{
 
-			int bytesRead = sock.Receive(from, packet.GetBuffer(), PACKET_SIZE);
+			int bytesRead = sock.Receive(from, tempBuf , PACKET_SIZE);
 			if (bytesRead > 0)
 			{
 
-				if (packet.DeconstructPacket())
+				// Check if packet can be received without error
+				if (!myConnection.Receive(replyMessage, (unsigned char*)tempBuf, PACKET_SIZE))
 				{
-					myConnection.ReceivePacket(packet);
+					continue;
 				}
 
 			}
@@ -76,14 +81,17 @@ int main()
 
 				std::cout << line.c_str() << std::endl;
 				
+				CSimpleMessage sendMessage;
+				sendMessage.SetMessage(count);
+
 				if (count % 5 == 0)
 				{
 					// Send packet with SPL
-					myConnection.Send(payload, true);
+					myConnection.Send(sendMessage, true);
 				}
 				else
 				{
-					myConnection.Send(payload);
+					myConnection.Send(sendMessage);
 				}
 
 				memset(payload, '\0', PAYLOAD_SIZE);
@@ -98,47 +106,10 @@ int main()
 			last = now;
 			count++;
 			dur = (rand() % 500) + 1;
+
+			memset(tempBuf, '\0', PACKET_SIZE);
 		}
 	}
-
-	/*
-	if (file.is_open())
-	{
-		while (std::getline(file, line))
-		{
-			std::cout << line << '\n';
-		}
-		file.close();
-	}
-
-
-	std::cout << "Message #: ";
-
-	int count;
-	scanf_s("%d\n", &count);
-
-	
-
-	for (int i = 0; i < count; i++)
-	{
-		fgets((char *)payload, PAYLOAD_SIZE, stdin);
-		myConnection.Send(payload);
-		myConnection.Update();
-
-		int bytesRead = sock.Receive(from, packet.GetBuffer(), PACKET_SIZE);
-
-		if (bytesRead)
-		{
-
-			if (!packet.DeconstructPacket()) continue;
-
-			myConnection.ReceivePacket(packet);
-
-		}
-
-	}
-	*/
-
 
 	CLogManager::Instance().ShutDown();
 

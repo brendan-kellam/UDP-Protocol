@@ -101,14 +101,6 @@ int CSocket::Receive(CAddress& sender, void* data, int size)
 		return false;
 	}
 
-	//// -- Setup from address
-	//memset((char *)&m_otherAddress, 0, sizeof(m_otherAddress));
-	//m_otherAddress.sin_family = AF_INET;
-	//m_otherAddress.sin_addr.s_addr = htonl(sender.GetAddress());
-	//m_otherAddress.sin_port = htons(sender.GetPort());
-	//int len = sizeof(m_otherAddress);
-	//// -------------------
-
 	memset((char *)&m_otherAddress, 0, sizeof(m_otherAddress));
 	m_otherAddress.sin_family = AF_INET;
 	int len = sizeof(m_otherAddress);

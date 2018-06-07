@@ -1,6 +1,8 @@
 #include "Connection.h"
 #include <algorithm>
 #include "LogManager.h"
+#include "Stream/WriteStream.h"
+#include "Stream/ReadStream.h"
 
 CConnection::CConnection(CAddress& address, CSocket& socket)
 	: m_address(address),
@@ -31,8 +33,20 @@ CAddress& CConnection::GetAddress() const
 
 
 // TODO: Possibly remove
-void CConnection::ReceivePacket(CPacket& packet)
+bool CConnection::Receive(CMessage& message, unsigned char* buffer, size_t size)
 {
+	CPacket packet;
+
+	memcpy(packet.GetBuffer(), buffer, size);
+
+	CReadStream stream(buffer, size);
+	packet.Serialize(stream);
+	message.Serialize(stream);
+
+	if (!packet.IsValidProtocolID())
+	{
+		//return false;
+	}
 
 	// Add packet to IN-QUEUE
 	m_in.push_back(packet);
@@ -54,7 +68,7 @@ void CConnection::ReceivePacket(CPacket& packet)
 	std::bitset<BITFIELD_SIZE> ackBitfield(ackBitfieldInt);
 
 	// Log message
-	LogPacketTransfer("Recieved Packet", packet);
+	LogPacketTransfer("Recieved Packet", packet, message);
 
 	// Loop each ack bit
 	for (uint16_t i = 0; i < BITFIELD_SIZE; i++)
@@ -125,11 +139,12 @@ void CConnection::ReceivePacket(CPacket& packet)
 	LogQueueStatus(std::string("Out-Queue"), m_out);
 	LogQueueStatus(std::string("In-Queue"), m_in);
 
+	return true;
 }
 
 // Send payload to this connection. 
 // NOTE: SPL (simulated packet loss) SHOULD ONLY BE SET FOR TESTING PURPOSES (duh...)
-bool CConnection::Send(unsigned char payload[PAYLOAD_SIZE], bool SPL /* = false */)
+bool CConnection::Send(CMessage& message, bool SPL /* = false */)
 {
 
 	// Increment local sequence number
@@ -142,6 +157,7 @@ bool CConnection::Send(unsigned char payload[PAYLOAD_SIZE], bool SPL /* = false 
 	{
 		
 		// Get sequence number to check ack
+		// NOTE WRAP ARROUNDS 
 		uint16_t sequenceNumber = m_remoteSequenceNum - i;
 
 		// Search for sequence number in IN-QUEUE 
@@ -161,9 +177,15 @@ bool CConnection::Send(unsigned char payload[PAYLOAD_SIZE], bool SPL /* = false 
 
 	// Create a new packet
 	CPacket packet(m_localSequenceNum, m_remoteSequenceNum, ackBitfieldInt);
-	
-	// Construct packet
-	if (!packet.ConstructPacket(payload))
+
+	CWriteStream stream(packet.GetBuffer(), PACKET_SIZE);
+	packet.Serialize(stream);
+	message.Serialize(stream);
+
+	stream.Flush();
+
+	// Protocol ID should never be invalid on write
+	if (!packet.IsValidProtocolID())
 	{
 		// if error occurs while constructing
 		return false;
@@ -200,7 +222,7 @@ bool CConnection::Send(unsigned char payload[PAYLOAD_SIZE], bool SPL /* = false 
 	}
 
 	// Log message
-	LogPacketTransfer(sendMessage.c_str(), packet);
+	LogPacketTransfer(sendMessage.c_str(), packet, message);
 
 	LogQueueStatus(std::string("Out-Queue"), m_out);
 	LogQueueStatus(std::string("In-Queue"), m_in);
@@ -229,7 +251,11 @@ void CConnection::DetectPacketLoss()
 			if (duration > MAX_RTT)
 			{
 
-				LogPacketTransfer("Dropped Packet", *it);
+				std::ostringstream log;
+				std::bitset<BITFIELD_SIZE> ackBitfield(it->GetAckBitfieldInt());
+				log << "{" << "Packet loss" << "} (" << m_address.GetFormattedAddress() << ":" << m_address.GetPort() << ")" << " (PS: " << it->GetID() << ", ACK: "
+					<< it->GetAck() << ", PAB: " << ackBitfield;
+				CLogManager::Instance().WriteLine(log.str());
 	
 				// remove the packet from the out queue
 				it = m_out.erase(it);
@@ -337,12 +363,13 @@ void CConnection::Update()
 
 }
 
-void CConnection::LogPacketTransfer(const char* type, CPacket& packet)
+void CConnection::LogPacketTransfer(const char* type, CPacket& packet, CMessage& message)
 {
 	std::ostringstream log;
 	std::bitset<BITFIELD_SIZE> ackBitfield(packet.GetAckBitfieldInt());
 	log << "{" << type << "} (" << m_address.GetFormattedAddress() << ":" << m_address.GetPort() << ")" << " (PS: " << packet.GetID() << ", ACK: "
-		<< packet.GetAck() << ", PAB: " << ackBitfield << " (MSG = " << packet.GetPayload() << ")";
+		<< packet.GetAck() << ", PAB: " << ackBitfield;
+	log << " (MSG = " << message.ToString() << ")";
 	CLogManager::Instance().WriteLine(log.str());
 }
 

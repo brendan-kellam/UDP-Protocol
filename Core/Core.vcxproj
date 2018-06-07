@@ -138,6 +138,7 @@
     <ClInclude Include="src\Connection.h" />
     <ClInclude Include="src\LogManager.h" />
     <ClInclude Include="src\Manager.h" />
+    <ClInclude Include="src\Message.h" />
     <ClInclude Include="src\Packet.h" />
     <ClInclude Include="src\Platform.h" />
     <ClInclude Include="src\Serializable.h" />

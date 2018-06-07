@@ -3,6 +3,7 @@
 #include "ConnectionManager.h"
 #include "LogManager.h"
 #include "Packet.h"
+#include "Message.h"
 #include <conio.h>
 #include <stdio.h>
 
@@ -59,35 +60,27 @@ void CConnectionManager::StartUp()
 
 	memcpy(reply, "This is a reply ping!", 22);
 
+	CSimpleMessage replyMessage;
+	replyMessage.SetMessage(1);
+
+	CSimpleMessage incomingMessage;
 
 	std::ostringstream log;
 
+	void* tempBuf[PACKET_SIZE];
 
 	// receive packets
-	// TODO: Make this shit more elegent. I.E Do NOT use _kbhit
+	// TODO: Make this shit more elegant. I.E Do NOT use _kbhit
 	while (!_kbhit())
 	{
 
 		CAddress from;
 
-		// TODO: Consider moving this out of loop (Construction of a new object is wasteful. 
-		// We could instead pass-by-copy to a given connection when a packet arrives)
-		CPacket inPacket;
-
 		// NON-BLOCKING CALL
-		int bytesRead = m_serverSocket.Receive(from, inPacket.GetBuffer(), PACKET_SIZE);
+		int bytesRead = m_serverSocket.Receive(from, tempBuf, PACKET_SIZE);
 
 		if (bytesRead > 0)
 		{
-
-			// TODO: Consider moving DeconstructPacket to a given connection (for clarity)
-			if (!inPacket.DeconstructPacket())
-			{
-				log << "{Unknown Packet} (" << from.GetFormattedAddress() << ":" << from.GetPort() << ")";
-				CLogManager::Instance().WriteLine(log.str());
-				log.str("");
-				continue;
-			}
 
 			CConnection* connection;
 
@@ -95,26 +88,34 @@ void CConnectionManager::StartUp()
 			// ---- EXISTING CONNECTION ----
 			if (connection = GetConnection(from))
 			{
-				connection->ReceivePacket(inPacket);
-				connection->Send(reply);
+				connection->Receive(incomingMessage, (unsigned char*) tempBuf, PACKET_SIZE);
+				connection->Send(replyMessage);
 			}
 
 			// ---- NEW CONNECTION ----
 			else
 			{
 				// Create new connection and insert into hashmap
+				// TODO: Don't allocate new objects for potential packets not addressed to us!!
 				connection = new CConnection(from, m_serverSocket);
+
+				// Check if packet can be received without error
+				if (!connection->Receive(incomingMessage, (unsigned char*)tempBuf, PACKET_SIZE))
+				{
+					delete connection;
+
+					// Ignore connection
+					continue;
+				}
+
 				m_connections.insert(ConnectionMap::value_type(from, connection));
 
-				connection->ReceivePacket(inPacket);
-				connection->Send(reply);
+				connection->Send(replyMessage);
 			}
-
-			std::cout << "Message: " << inPacket.GetPayload() << std::endl;
 
 		}
 
-		memset(inPacket.GetBuffer(), '\0', PACKET_SIZE);
+		memset(tempBuf, '\0', PACKET_SIZE);
 
 		UpdateConnections();
 	}

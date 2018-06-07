@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 
 	uint8_t data[dataSizeInBytes];
 
+	/*
 	{
 		uint8_t transmissionBuf[16];
 
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
 		msgRecv.Serialize(readStream);
 
 		std::cout << "Message: " << msgRecv.GetMessage() << std::endl;
-	}
+	}*/
 
 	CSequenceBuffer<int> myBuf(10);
 
@@ -62,8 +63,6 @@ int main(int argc, char** argv)
 	std::cout << *myBuf.Find(3) << std::endl;
 
 
-	system("pause");
-		/*
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();
 	
@@ -71,8 +70,6 @@ int main(int argc, char** argv)
 
 	CConnectionManager::Instance().ShutDown();
 	CLogManager::Instance().ShutDown();
-
-	*/
 
 	return 0;
 }

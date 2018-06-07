@@ -9,6 +9,7 @@
 #include "Address.h"
 #include "Packet.h"
 #include "Socket.h"
+#include "Message.h"
 
 #define STEADY_CLOCK_NOW std::chrono::steady_clock::now()
 #define UINT16_HALF 32768
@@ -51,9 +52,8 @@ public:
 
 	void Update();
 
-	bool Send(unsigned char payload[PAYLOAD_SIZE], bool SPL = false);
-
-	void ReceivePacket(CPacket& packet);
+	bool Send(CMessage& message, bool SPL = false);
+	bool Receive(CMessage& message, unsigned char* buffer, size_t size);
 
 private:
 
@@ -78,7 +78,7 @@ private:
 
 	std::ostringstream log;
 
-	void LogPacketTransfer(const char* type, CPacket& packet);
+	void LogPacketTransfer(const char* type, CPacket& packet, CMessage& message);
 	void LogQueueStatus(std::string& type, std::vector<CPacket>& d);
 
 	void DetectPacketLoss();
