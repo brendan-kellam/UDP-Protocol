@@ -3,6 +3,7 @@
 #include "ConnectionManager.h"
 #include "LogManager.h"
 #include "Packet.h"
+#include "Message.h"
 #include <conio.h>
 #include <stdio.h>
 
@@ -59,6 +60,10 @@ void CConnectionManager::StartUp()
 
 	memcpy(reply, "This is a reply ping!", 22);
 
+	CSimpleMessage replyMessage;
+	replyMessage.SetMessage(1);
+
+	CSimpleMessage incomingMessage;
 
 	std::ostringstream log;
 
@@ -83,8 +88,8 @@ void CConnectionManager::StartUp()
 			// ---- EXISTING CONNECTION ----
 			if (connection = GetConnection(from))
 			{
-				connection->Receive((unsigned char*) tempBuf, PACKET_SIZE);
-				connection->Send(reply);
+				connection->Receive(incomingMessage, (unsigned char*) tempBuf, PACKET_SIZE);
+				connection->Send(replyMessage);
 			}
 
 			// ---- NEW CONNECTION ----
@@ -95,7 +100,7 @@ void CConnectionManager::StartUp()
 				connection = new CConnection(from, m_serverSocket);
 
 				// Check if packet can be received without error
-				if (!connection->Receive((unsigned char*)tempBuf, PACKET_SIZE))
+				if (!connection->Receive(incomingMessage, (unsigned char*)tempBuf, PACKET_SIZE))
 				{
 					delete connection;
 
@@ -105,7 +110,7 @@ void CConnectionManager::StartUp()
 
 				m_connections.insert(ConnectionMap::value_type(from, connection));
 
-				connection->Send(reply);
+				connection->Send(replyMessage);
 			}
 
 		}

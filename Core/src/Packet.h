@@ -72,7 +72,7 @@ public:
 	uint16_t GetAck() const					{ return m_ack; }
 	uint32_t GetAckBitfieldInt() const		{ return m_ackBitfieldInt; }
 	
-	bool IsValidProtocolID() const			{ return m_protocolID == ms_protocolID; }
+	bool IsValidProtocolID() const			{ return m_remoteProtocolID == m_protocolID; }
 
 	bool operator==(const CPacket & packet) const
 	{
@@ -94,7 +94,7 @@ protected:
 	uint32_t m_ackBitfieldInt;
 
 	// Protocol id -- ID for this protocol
-	uint32_t m_protocolID;
+	uint32_t m_remoteProtocolID;
 
 	// ACK Bitfield
 	//std::bitset<BITFIELD_SIZE> m_bitfield;
@@ -109,7 +109,7 @@ private:
 
 	unsigned char m_buffer[PACKET_SIZE];
 
-	uint32_t ms_protocolID = static_cast<uint32_t>(std::hash<std::string>()("Eros"));
+	uint32_t m_protocolID;
 
 
 };

@@ -53,7 +53,7 @@ public:
 	void Update();
 
 	bool Send(CMessage& message, bool SPL = false);
-	bool Receive(unsigned char* buffer, size_t size);
+	bool Receive(CMessage& message, unsigned char* buffer, size_t size);
 
 private:
 
@@ -78,7 +78,7 @@ private:
 
 	std::ostringstream log;
 
-	void LogPacketTransfer(const char* type, CPacket& packet);
+	void LogPacketTransfer(const char* type, CPacket& packet, CMessage& message);
 	void LogQueueStatus(std::string& type, std::vector<CPacket>& d);
 
 	void DetectPacketLoss();

@@ -33,7 +33,7 @@ CAddress& CConnection::GetAddress() const
 
 
 // TODO: Possibly remove
-bool CConnection::Receive(unsigned char* buffer, size_t size)
+bool CConnection::Receive(CMessage& message, unsigned char* buffer, size_t size)
 {
 	CPacket packet;
 
@@ -41,13 +41,12 @@ bool CConnection::Receive(unsigned char* buffer, size_t size)
 
 	CReadStream stream(buffer, size);
 	packet.Serialize(stream);
+	message.Serialize(stream);
 
-	if (!packet.DeconstructPacket())
+	if (!packet.IsValidProtocolID())
 	{
-		return false;
+		//return false;
 	}
-
-	//std::cout << "Message: " << packet.GetPayload() << std::endl;
 
 	// Add packet to IN-QUEUE
 	m_in.push_back(packet);
@@ -69,7 +68,7 @@ bool CConnection::Receive(unsigned char* buffer, size_t size)
 	std::bitset<BITFIELD_SIZE> ackBitfield(ackBitfieldInt);
 
 	// Log message
-	LogPacketTransfer("Recieved Packet", packet);
+	LogPacketTransfer("Recieved Packet", packet, message);
 
 	// Loop each ack bit
 	for (uint16_t i = 0; i < BITFIELD_SIZE; i++)
@@ -158,6 +157,7 @@ bool CConnection::Send(CMessage& message, bool SPL /* = false */)
 	{
 		
 		// Get sequence number to check ack
+		// NOTE WRAP ARROUNDS 
 		uint16_t sequenceNumber = m_remoteSequenceNum - i;
 
 		// Search for sequence number in IN-QUEUE 
@@ -181,6 +181,8 @@ bool CConnection::Send(CMessage& message, bool SPL /* = false */)
 	CWriteStream stream(packet.GetBuffer(), PACKET_SIZE);
 	packet.Serialize(stream);
 	message.Serialize(stream);
+
+	stream.Flush();
 
 	// Protocol ID should never be invalid on write
 	if (!packet.IsValidProtocolID())
@@ -220,7 +222,7 @@ bool CConnection::Send(CMessage& message, bool SPL /* = false */)
 	}
 
 	// Log message
-	LogPacketTransfer(sendMessage.c_str(), packet);
+	LogPacketTransfer(sendMessage.c_str(), packet, message);
 
 	LogQueueStatus(std::string("Out-Queue"), m_out);
 	LogQueueStatus(std::string("In-Queue"), m_in);
@@ -249,7 +251,11 @@ void CConnection::DetectPacketLoss()
 			if (duration > MAX_RTT)
 			{
 
-				LogPacketTransfer("Dropped Packet", *it);
+				std::ostringstream log;
+				std::bitset<BITFIELD_SIZE> ackBitfield(it->GetAckBitfieldInt());
+				log << "{" << "Packet loss" << "} (" << m_address.GetFormattedAddress() << ":" << m_address.GetPort() << ")" << " (PS: " << it->GetID() << ", ACK: "
+					<< it->GetAck() << ", PAB: " << ackBitfield;
+				CLogManager::Instance().WriteLine(log.str());
 	
 				// remove the packet from the out queue
 				it = m_out.erase(it);
@@ -357,12 +363,13 @@ void CConnection::Update()
 
 }
 
-void CConnection::LogPacketTransfer(const char* type, CPacket& packet)
+void CConnection::LogPacketTransfer(const char* type, CPacket& packet, CMessage& message)
 {
 	std::ostringstream log;
 	std::bitset<BITFIELD_SIZE> ackBitfield(packet.GetAckBitfieldInt());
 	log << "{" << type << "} (" << m_address.GetFormattedAddress() << ":" << m_address.GetPort() << ")" << " (PS: " << packet.GetID() << ", ACK: "
-		<< packet.GetAck() << ", PAB: " << ackBitfield << " (MSG = " << packet.GetPayload() << ")";
+		<< packet.GetAck() << ", PAB: " << ackBitfield;
+	log << " (MSG = " << message.ToString() << ")";
 	CLogManager::Instance().WriteLine(log.str());
 }
 

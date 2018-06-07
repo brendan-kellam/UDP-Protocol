@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 
 	uint8_t data[dataSizeInBytes];
 
+	/*
 	{
 		uint8_t transmissionBuf[16];
 
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
 		msgRecv.Serialize(readStream);
 
 		std::cout << "Message: " << msgRecv.GetMessage() << std::endl;
-	}
+	}*/
 
 	CSequenceBuffer<int> myBuf(10);
 

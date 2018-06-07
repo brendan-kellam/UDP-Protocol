@@ -8,9 +8,11 @@ CBitReader::CBitReader(uint32_t* buffer, size_t bufferLen)
 	m_numBytesRead(0),
 	m_totalBits(bufferLen * 8)
 {
+#ifdef BITPACKER_DEBUG_LOG
 	log << "Bit reader running..";
 	CLogManager::Instance().WriteLine(log.str());
 	log.str("");
+#endif
 }
 
 uint32_t CBitReader::ReadBits(const int bits)
@@ -19,19 +21,19 @@ uint32_t CBitReader::ReadBits(const int bits)
 	UDP_TRAP(bits > 0);
 	UDP_TRAP(m_numBitsRead < m_totalBits);
 	
-	// Telem
+#ifdef BITPACKER_DEBUG_LOG
 	{
 		log << "Reading in " << bits << " bits";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
 
-	// Telem
 	{
 		log << "Current scratch status: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
+#endif
 
 	// IFF the number of bits requested for a read are
 	// greater than the current number of bits in m_scratch,
@@ -41,12 +43,13 @@ uint32_t CBitReader::ReadBits(const int bits)
 		// We can ONLY read if the wordIndex is strictly less than the bufferLength
 		UDP_TRAP(m_numBytesRead < m_bufferLen);
 
-		// Telem
+#ifdef BITPACKER_DEBUG_LOG
 		{
 			log << "Reading in next word: " << m_buffer[m_wordIndex] << " [" << getBits(m_buffer[m_wordIndex], WORD_SIZE_IN_BITS) << "] -----";
 			CLogManager::Instance().WriteLine(log.str());
 			log.str("");
 		}
+#endif
 
 		uint64_t nextWord = m_buffer[m_wordIndex];
 		nextWord <<= m_scratchBits;
@@ -61,22 +64,24 @@ uint32_t CBitReader::ReadBits(const int bits)
 		// Increment word index and the number of bytes read
 		m_wordIndex++;
 		m_numBytesRead += WORD_SIZE_IN_BYTES;
-		
-		// Telem
+
+#ifdef BITPACKER_DEBUG_LOG
 		{
 			log << "Scratch: " << m_scratch << " [" << getBits(m_scratch, m_scratchBits) << "]";
 			CLogManager::Instance().WriteLine(log.str());
 			log.str("");
 		}
+#endif
+
 	}
 
-	// Telem
+#ifdef BITPACKER_DEBUG_LOG
 	{
 		log << "Scratch Bits: " << m_scratchBits;
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
-
+#endif
 
 	int remainingBits = m_scratchBits - bits;
 
@@ -107,20 +112,19 @@ uint32_t CBitReader::ReadBits(const int bits)
 	// Increase the number of bits read
 	m_numBitsRead += bits;
 
-	// Telem
+#ifdef BITPACKER_DEBUG_LOG
 	{
 		log << "READ DATA: " << output << " [" << getBits(output, bits) << "]";
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
 
-	// Telem
 	{
 		log << "Current bits read: " << m_numBitsRead;
 		CLogManager::Instance().WriteLine(log.str());
 		log.str("");
 	}
-
+#endif
 
 	return output;
 }

@@ -2,12 +2,13 @@
 #include "Serialize.h"
 
 CPacket::CPacket(uint16_t lsn, uint16_t rsn, uint32_t pab)
-	: m_protocolID(ms_protocolID),
+	: m_protocolID(static_cast<uint32_t>(std::hash<std::string>()("Eros"))),
 	m_id(lsn),
 	m_ack(rsn),
 	m_ackBitfieldInt(pab),
 	m_isAcked(false)
 {
+	m_remoteProtocolID = m_protocolID;
 }
 
 CPacket::CPacket()
@@ -27,8 +28,8 @@ bool CPacket::ConstructPacket(unsigned char payload[PAYLOAD_SIZE])
 	/*
 	*	[PROTOCOL ID: 4 BYTES]
 	*/
-	Serialize::SerializeU32Int(&m_buffer[point], CPacket::ms_protocolID);
-	point += sizeof(CPacket::ms_protocolID);
+	//Serialize::SerializeU32Int(&m_buffer[point], CPacket::ms_protocolID);
+	//point += sizeof(CPacket::ms_protocolID);
 
 	/*
 	*	[PACKET SEQUENCE NUMBER: 2 BYTES]
@@ -93,14 +94,14 @@ bool CPacket::DeconstructPacket()
 
 
 	// Return true if protocol ID's match
-	return CPacket::ms_protocolID == remoteProtocolId;
+	return m_protocolID == remoteProtocolId;
 }
 
 
 template <typename Stream>
 bool CPacket::SerializeInternal(Stream& stream)
 {
-	serialize_bits(stream, m_protocolID, 32);
+	serialize_bits(stream, m_remoteProtocolID, 32);
 	serialize_bits(stream, m_id, 16);
 	serialize_bits(stream, m_ack, 16);
 	serialize_bits(stream, m_ackBitfieldInt, 32);
