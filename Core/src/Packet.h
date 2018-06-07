@@ -58,10 +58,6 @@ public:
 	inline unsigned char * GetBuffer() { return m_buffer; }
 	inline unsigned char * GetPayload() { return &m_buffer[12]; }
 
-
-	bool ConstructPacket(unsigned char payload[PAYLOAD_SIZE]);
-	bool DeconstructPacket();
-
 	void SetSentTime(timePoint time)		{ m_sentTime = time; }
 	timePoint GetSentTime() const			{ return m_sentTime; }
 
