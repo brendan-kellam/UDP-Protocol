@@ -9,7 +9,7 @@
 #include "Address.h"
 #include "Packet.h"
 #include "Socket.h"
-#include "Message.h"
+#include "Message/Message.h"
 
 #define STEADY_CLOCK_NOW std::chrono::steady_clock::now()
 #define UINT16_HALF 32768

@@ -66,7 +66,13 @@
     <ClInclude Include="src\Util\SequenceBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Message.h">
+    <ClInclude Include="src\Message\Message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Message\MessageFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Message\SimpleMessage\SimpleMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -99,6 +105,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Stream\ReadStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Message\MessageFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
