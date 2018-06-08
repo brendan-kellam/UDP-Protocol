@@ -1,21 +1,8 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef SIMPLEMESSAGE_H
+#define SIMPLEMESSAGE_H
 
-#include "Serializable.h"
-#include <iostream>
-
-class CMessage
-	: public ISerializable
-{
-
-public:
-
-	virtual bool Serialize(CWriteStream& stream) override = 0;
-	virtual bool Serialize(CReadStream& stream) override = 0;
-
-	virtual std::string ToString() = 0;
-
-};
+#include "Message/Message.h"
+#include "Message/MessageFactory.h"
 
 class CSimpleMessage
 	: public CMessage
@@ -57,6 +44,44 @@ public:
 	{
 		return m_message;
 	}
+};
+
+class CSimpleMsgFactory
+	: public CMessageFactory
+{
+
+public:
+	enum ETypes
+	{
+		SIMPLE_MESSAGE,
+		LENGTH
+	};
+
+	CSimpleMsgFactory() : CMessageFactory(ETypes::LENGTH) { }
+
+protected:
+	virtual CMessage* CreateMessageInternal(int type) override
+	{
+		CMessage* message;
+
+		switch (type)
+		{
+		case ETypes::SIMPLE_MESSAGE:
+
+			message = new CSimpleMessage();
+			if (!message)
+			{
+				return NULL;
+			}
+			SetMessageType(message, ETypes::SIMPLE_MESSAGE);
+			return message;
+
+		default:
+			return NULL;
+
+		}
+	}
+
 };
 
 

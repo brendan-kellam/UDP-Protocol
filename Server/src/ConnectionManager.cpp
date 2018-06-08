@@ -3,7 +3,8 @@
 #include "ConnectionManager.h"
 #include "LogManager.h"
 #include "Packet.h"
-#include "Message.h"
+#include "Message/Message.h"
+#include "Message/SimpleMessage/SimpleMessage.h"
 #include <conio.h>
 #include <stdio.h>
 

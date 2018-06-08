@@ -16,6 +16,8 @@
 #include "Stream/Stream.h"
 #include "Serializable.h"
 #include "Util/SequenceBuffer.h"
+#include "Message/SimpleMessage/SimpleMessage.h"
+#include "Message/Message.h"
 
 #define SERVER_NAME "Server"
 
@@ -27,40 +29,45 @@ int main(int argc, char** argv)
 
 	uint8_t data[dataSizeInBytes];
 
-	/*
+	
 	{
 		uint8_t transmissionBuf[16];
 
 		CWriteStream writeStream(transmissionBuf, 16);
 		CReadStream readStream(transmissionBuf, 16);
 
-		CMessage msgSend;
-		CMessage msgRecv;
 
 		// --- PEER A ---
+		CSimpleMsgFactory facSend;
+		CSimpleMessage* msgSend = (CSimpleMessage*)facSend.CreateMessage(CSimpleMsgFactory::ETypes::SIMPLE_MESSAGE);
 
-		msgSend.SetMessage(7);
+		uint32_t typeSend = msgSend->GetType();
+		serialize_int(writeStream, typeSend, 0, CSimpleMsgFactory::ETypes::LENGTH);
 
-		msgSend.Serialize(writeStream);
+		msgSend->SetMessage(15);
+		msgSend->Serialize(writeStream);
 		writeStream.Flush();
+
+		facSend.ReleaseMessage(msgSend);
 		
 		// --- PEER B ---
 
-		msgRecv.Serialize(readStream);
+		CSimpleMsgFactory facRecv;
 
-		std::cout << "Message: " << msgRecv.GetMessage() << std::endl;
-	}*/
+		uint32_t typeRecv;
+		serialize_int(readStream, typeRecv, 0, CSimpleMsgFactory::ETypes::LENGTH);
 
-	CSequenceBuffer<int> myBuf(10);
+		CMessage* msg = facRecv.CreateMessage(typeRecv);
 
-	for (uint16_t i = 0; i < 5; i++)
-	{
-		int s = 10;
-		*myBuf.Insert(i) = s;
+		if (msg)
+		{
+			msg->Serialize(readStream);
+			std::cout << "Message: " << ((CSimpleMessage*) msg)->GetMessage() << std::endl;
+		}
+		
+		facRecv.ReleaseMessage(msg);
+
 	}
-	
-	std::cout << *myBuf.Find(3) << std::endl;
-
 
 	CLogManager::Instance().StartUp();
 	CConnectionManager::Instance().StartUp();

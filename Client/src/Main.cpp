@@ -8,7 +8,8 @@
 #include "Connection.h"
 #include "Address.h"
 #include "Socket.h"
-#include "Message.h"
+#include "Message/Message.h"
+#include "Message/SimpleMessage/SimpleMessage.h"
 #include <WinSock2.h>
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
@@ -49,6 +50,8 @@ int main()
 	void* tempBuf[PACKET_SIZE];
 
 	CSimpleMessage replyMessage;
+
+	
 
 	while (true)
 	{
