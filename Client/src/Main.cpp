@@ -11,12 +11,19 @@
 #include "Message/Message.h"
 #include "Message/SimpleMessage/SimpleMessage.h"
 #include <WinSock2.h>
+#include "Window.h"
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 
-int main()
+int CALLBACK WinMain(
+	HINSTANCE hInstance,
+	HINSTANCE hPrevInstance,
+	LPSTR     lpCmdLine,
+	int       nCmdShow)
 {
 	std::cout << "Client running.." << std::endl;
+
+	Window window(800, 600, "Test!");
 
 
 	CLogManager::Instance().StartUp();
@@ -93,15 +100,15 @@ int main()
 
 					sendMessage->SetMessage(count);
 
-					if (count % 5 == 0)
-					{
-						// Send packet with SPL
-						myConnection.Send(*sendMessage, true);
-					}
-					else
-					{
+					//if (count % 5 == 0)
+					//{
+					//	// Send packet with SPL
+					//	myConnection.Send(*sendMessage, true);
+					//}
+					//else
+					//{
 						myConnection.Send(*sendMessage);
-					}
+					//}
 
 					memset(payload, '\0', PAYLOAD_SIZE);
 				}
@@ -131,3 +138,4 @@ int main()
 
 	return 0;
 }
+

@@ -136,6 +136,8 @@
     <ClInclude Include="src\BitPacker.h" />
     <ClInclude Include="src\BitReader.h" />
     <ClInclude Include="src\BitWriter.h" />
+    <ClInclude Include="src\ChilliException.h" />
+    <ClInclude Include="src\ChilliWin.h" />
     <ClInclude Include="src\Comparators.h" />
     <ClInclude Include="src\Connection.h" />
     <ClInclude Include="src\LogManager.h" />
@@ -152,12 +154,14 @@
     <ClInclude Include="src\Stream\Stream.h" />
     <ClInclude Include="src\Stream\WriteStream.h" />
     <ClInclude Include="src\Util\SequenceBuffer.h" />
+    <ClInclude Include="src\WindowsThrowMacros.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Address.cpp" />
     <ClCompile Include="src\BitPacker.cpp" />
     <ClCompile Include="src\BitReader.cpp" />
     <ClCompile Include="src\BitWriter.cpp" />
+    <ClCompile Include="src\ChilliException.cpp" />
     <ClCompile Include="src\Connection.cpp" />
     <ClCompile Include="src\LogManager.cpp" />
     <ClCompile Include="src\Message\MessageFactory.cpp" />

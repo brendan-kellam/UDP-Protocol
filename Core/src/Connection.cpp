@@ -94,7 +94,6 @@ bool CConnection::Receive(CMessage& message, unsigned char* buffer, size_t size)
 
 				// Ack the packet
 				it->AckPacket();
-
 			
 				{
 					using namespace std::chrono;
@@ -146,7 +145,6 @@ bool CConnection::Receive(CMessage& message, unsigned char* buffer, size_t size)
 // NOTE: SPL (simulated packet loss) SHOULD ONLY BE SET FOR TESTING PURPOSES (duh...)
 bool CConnection::Send(CMessage& message, bool SPL /* = false */)
 {
-
 	// Increment local sequence number
 	m_localSequenceNum++;
 
@@ -238,7 +236,6 @@ void CConnection::DetectPacketLoss()
 
 	while (it != m_out.end())
 	{
-
 		// if packet is acked, don't bother
 		if (!it->IsAcked())
 		{
@@ -261,7 +258,6 @@ void CConnection::DetectPacketLoss()
 				it = m_out.erase(it);
 				continue;
 			}
-
 		}
 
 		++it;
@@ -271,7 +267,6 @@ void CConnection::DetectPacketLoss()
 
 void CConnection::DetectFlowChange()
 {
-
 	// Get now time
 	auto now = STEADY_CLOCK_NOW;
 
@@ -406,4 +401,3 @@ void CConnection::LogQueueStatus(std::string& type, std::vector<CPacket>& d)
 	CLogManager::Instance().WriteLine(log.str());
 
 }
-
