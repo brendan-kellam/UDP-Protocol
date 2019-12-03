@@ -51,7 +51,7 @@ int main()
 
 	CSimpleMessage replyMessage;
 
-	
+	CSimpleMsgFactory messageFactory;
 
 	while (true)
 	{
@@ -84,20 +84,25 @@ int main()
 
 				std::cout << line.c_str() << std::endl;
 				
-				CSimpleMessage sendMessage;
-				sendMessage.SetMessage(count);
+
+				CSimpleMessage* sendMessage = (CSimpleMessage*) messageFactory.CreateMessage(CSimpleMsgFactory::ETypes::SIMPLE_MESSAGE);
+
+				sendMessage->SetMessage(count);
 
 				if (count % 5 == 0)
 				{
 					// Send packet with SPL
-					myConnection.Send(sendMessage, true);
+					myConnection.Send(*sendMessage, true);
 				}
 				else
 				{
-					myConnection.Send(sendMessage);
+					myConnection.Send(*sendMessage);
 				}
 
 				memset(payload, '\0', PAYLOAD_SIZE);
+				
+				// Release our message
+				messageFactory.ReleaseMessage(sendMessage);
 			}
 			else
 			{
