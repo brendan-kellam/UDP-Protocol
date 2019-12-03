@@ -3,10 +3,25 @@
 
 #include "Message/Message.h"
 #include "Message/MessageFactory.h"
+#include <optional>
+
+
+enum ETypes
+{
+	SIMPLE_MESSAGE,
+	LENGTH
+};
 
 class CSimpleMessage
 	: public CMessage
 {
+public:
+
+	CSimpleMessage()
+	{
+		m_type = ETypes::SIMPLE_MESSAGE;
+	}
+
 private:
 
 	int m_message; // min = 0, max = 1000  
@@ -51,11 +66,6 @@ class CSimpleMsgFactory
 {
 
 public:
-	enum ETypes
-	{
-		SIMPLE_MESSAGE,
-		LENGTH
-	};
 
 	CSimpleMsgFactory() : CMessageFactory(ETypes::LENGTH) { }
 
@@ -82,6 +92,17 @@ protected:
 		}
 	}
 
+	virtual std::optional<std::shared_ptr<CMessage>> CreateMessageI(int type) override
+	{
+		switch (type)
+		{
+		case ETypes::SIMPLE_MESSAGE:
+			return std::make_shared<CSimpleMessage>();
+
+		default:
+			return {};
+		}
+	}
 };
 
 

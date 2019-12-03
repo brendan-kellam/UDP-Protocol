@@ -84,25 +84,28 @@ int main()
 
 				std::cout << line.c_str() << std::endl;
 				
-
-				CSimpleMessage* sendMessage = (CSimpleMessage*) messageFactory.CreateMessage(CSimpleMsgFactory::ETypes::SIMPLE_MESSAGE);
-
-				sendMessage->SetMessage(count);
-
-				if (count % 5 == 0)
+				if (std::optional<std::shared_ptr<CMessage>> sendMessageOp = messageFactory.CreateMessage(ETypes::SIMPLE_MESSAGE))
 				{
-					// Send packet with SPL
-					myConnection.Send(*sendMessage, true);
-				}
-				else
-				{
-					myConnection.Send(*sendMessage);
+
+					std::shared_ptr<CSimpleMessage> sendMessage =
+						std::dynamic_pointer_cast<CSimpleMessage>(sendMessageOp.value());
+
+
+					sendMessage->SetMessage(count);
+
+					if (count % 5 == 0)
+					{
+						// Send packet with SPL
+						myConnection.Send(*sendMessage, true);
+					}
+					else
+					{
+						myConnection.Send(*sendMessage);
+					}
+
+					memset(payload, '\0', PAYLOAD_SIZE);
 				}
 
-				memset(payload, '\0', PAYLOAD_SIZE);
-				
-				// Release our message
-				messageFactory.ReleaseMessage(sendMessage);
 			}
 			else
 			{

@@ -3,9 +3,14 @@
 
 #include "Platform.h"
 #include <iostream>
+#include <vector>
+#include <optional>
 
 class CMessage;
 
+/*
+Abstract factory pattern.
+*/
 class CMessageFactory
 {
 public:
@@ -13,22 +18,20 @@ public:
 
 	virtual ~CMessageFactory();
 
-	CMessage* CreateMessage(int type);
-	
-	void AcquireMessage(CMessage* message);
-	void ReleaseMessage(CMessage* message);
+	std::optional<std::shared_ptr<CMessage>> CreateMessage(int type);
 
-	int GetNumTypes() const { return m_numTypes; }
+	inline int GetNumTypes() const { return m_numTypes; }
 
 protected:
 	void SetMessageType(CMessage* message, int type);
 	virtual CMessage* CreateMessageInternal(int type) = 0;
 
+	virtual std::optional<std::shared_ptr<CMessage>> CreateMessageI(int type) = 0;
+
 
 private:
 	int m_numTypes;
-	int m_totalRefs;
-
+	std::vector<std::shared_ptr<CMessage>> messages;
 };
 
 

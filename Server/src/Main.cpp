@@ -38,34 +38,33 @@ int main(int argc, char** argv)
 
 
 		// --- PEER A ---
-		CSimpleMsgFactory facSend;
-		CSimpleMessage* msgSend = (CSimpleMessage*)facSend.CreateMessage(CSimpleMsgFactory::ETypes::SIMPLE_MESSAGE);
 
-		uint32_t typeSend = msgSend->GetType();
-		serialize_int(writeStream, typeSend, 0, CSimpleMsgFactory::ETypes::LENGTH);
+		{
+			CSimpleMessage msgSend;
 
-		msgSend->SetMessage(15);
-		msgSend->Serialize(writeStream);
-		writeStream.Flush();
+			uint32_t typeSend = msgSend.GetType();
+			serialize_int(writeStream, typeSend, 0, ETypes::LENGTH);
 
-		facSend.ReleaseMessage(msgSend);
+			msgSend.SetMessage(15);
+			msgSend.Serialize(writeStream);
+			writeStream.Flush();
+		}
 		
 		// --- PEER B ---
 
 		CSimpleMsgFactory facRecv;
-
 		uint32_t typeRecv;
-		serialize_int(readStream, typeRecv, 0, CSimpleMsgFactory::ETypes::LENGTH);
+		serialize_int(readStream, typeRecv, 0, ETypes::LENGTH);
 
-		CMessage* msg = facRecv.CreateMessage(typeRecv);
-
-		if (msg)
+		if (auto msgRecvOptional =
+			facRecv.CreateMessage(typeRecv))
 		{
+			std::shared_ptr<CSimpleMessage> msg =
+				std::dynamic_pointer_cast<CSimpleMessage>(msgRecvOptional.value());
+
 			msg->Serialize(readStream);
-			std::cout << "Message: " << ((CSimpleMessage*) msg)->GetMessage() << std::endl;
+			std::cout << "Message: " << msg->GetMessage() << std::endl;
 		}
-		
-		facRecv.ReleaseMessage(msg);
 
 	}
 
