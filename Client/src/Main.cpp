@@ -15,33 +15,42 @@
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 
-int CALLBACK WinMain(
-	HINSTANCE hInstance,
-	HINSTANCE hPrevInstance,
-	LPSTR     lpCmdLine,
-	int       nCmdShow)
+int WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPSTR lpCmdLine,
+	_In_ int nShowCmd)
 {
+
 	std::cout << "Client running.." << std::endl;
 
+	CWriteStream stream();
+	
 	Window window(800, 600, "Test!");
 
 
 	CLogManager::Instance().StartUp();
 
-	WSADATA data;
-	WSAStartup(MAKEWORD(2, 2), &data);
-
 	// MAIN LOOP
 	CSocket sock;
 	sock.Open(4002);
 
-	
 	CAddress addr(127, 0, 0, 1, 2000);
 	CConnection myConnection(addr, sock);
 
 	unsigned char payload[PAYLOAD_SIZE];
 	memset(payload, '\0', PAYLOAD_SIZE);
 	
+	{
+		// Some initialization....
+
+		//std::unique_ptr<Connection> connection = connectionManager->connect(address); // Connects over available ports
+
+		// Do some stuff....
+		//connection->SendMessage()
+
+		// Disconnect
+	}
 	
 	CAddress from;
 

@@ -6,7 +6,8 @@ CPacket::CPacket(uint16_t lsn, uint16_t rsn, uint32_t pab)
 	m_id(lsn),
 	m_ack(rsn),
 	m_ackBitfieldInt(pab),
-	m_isAcked(false)
+	m_isAcked(false),
+	m_numMessages(0)
 {
 	m_remoteProtocolID = m_protocolID;
 }
@@ -24,6 +25,7 @@ bool CPacket::SerializeInternal(Stream& stream)
 	serialize_bits(stream, m_id, 16);
 	serialize_bits(stream, m_ack, 16);
 	serialize_bits(stream, m_ackBitfieldInt, 32);
+	serialize_bits(stream, m_numMessages, 8);
 
 	return true;
 }

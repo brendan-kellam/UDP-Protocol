@@ -140,6 +140,7 @@
     <ClInclude Include="src\ChilliWin.h" />
     <ClInclude Include="src\Comparators.h" />
     <ClInclude Include="src\Connection.h" />
+    <ClInclude Include="src\IConnection.h" />
     <ClInclude Include="src\LogManager.h" />
     <ClInclude Include="src\Manager.h" />
     <ClInclude Include="src\Message\Message.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="src\BitWriter.cpp" />
     <ClCompile Include="src\ChilliException.cpp" />
     <ClCompile Include="src\Connection.cpp" />
+    <ClCompile Include="src\IConnection.cpp" />
     <ClCompile Include="src\LogManager.cpp" />
     <ClCompile Include="src\Message\MessageFactory.cpp" />
     <ClCompile Include="src\Packet.cpp" />

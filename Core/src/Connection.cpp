@@ -90,7 +90,6 @@ bool CConnection::Receive(CMessage& message, unsigned char* buffer, size_t size)
 				log << "{Acked Packet} (" << m_address.GetFormattedAddress() << ":" << m_address.GetPort() << ")" << " (PS: " << it->GetID() << ")";
 				CLogManager::Instance().WriteLine(log.str());
 				log.str("");
-				
 
 				// Ack the packet
 				it->AckPacket();

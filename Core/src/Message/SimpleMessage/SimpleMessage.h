@@ -9,6 +9,7 @@
 enum ETypes
 {
 	SIMPLE_MESSAGE,
+	VEC_3,
 	LENGTH
 };
 
@@ -29,7 +30,7 @@ private:
 	template <typename Stream>
 	bool SerializeInternal(Stream& stream)
 	{
-		serialize_int(stream, m_message, 0, 1000);
+		serialize_int(stream, m_message, INT_MIN, INT_MAX);
 
 		return true;
 	}
@@ -60,6 +61,43 @@ public:
 		return m_message;
 	}
 };
+
+class CVec3Message
+	: CMessage
+{
+private:
+	template <typename Stream>
+	bool SerializeInternal(Stream& stream)
+	{
+		serialize_int(stream, x, 0, 1000);
+		serialize_int(stream, y, 0, 1000);
+		serialize_int(stream, z, 0, 1000);
+
+		return true;
+	}
+
+public:
+	virtual bool Serialize(CWriteStream& stream) override
+	{
+		return SerializeInternal(stream);
+	}
+
+	virtual bool Serialize(CReadStream& stream) override
+	{
+		return SerializeInternal(stream);
+	}
+
+	virtual std::string ToString() override
+	{
+		std::ostringstream stringStream;
+		stringStream << "{" << x << ", " << y << ", " << z << "}";
+		return stringStream.str();
+	}
+
+private:
+	int x, y, z;
+};
+
 
 class CSimpleMsgFactory
 	: public CMessageFactory

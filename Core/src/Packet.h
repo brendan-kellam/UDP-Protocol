@@ -13,18 +13,32 @@
 // [uint protocol id]			{4   bytes}			// -- HEADER START
 // [uint sequencing id]			{2   bytes}
 // [uint ack]					{2   bytes}
-// [uint ack bitfield]			{4   bytes}			// -- HEADER END
+// [uint ack bitfield]			{4   bytes}
+// [uint num messages]			{1   byte }			// -- HEADER END
 // [void* payload]				{244 bytes}
+//
+//
+//	bytes | name
+//	__________________________ Packet header
+//	4	 | protocolID
+//	2	 | packet id
+//	2	 | ack
+//	4	 | ack bitfield
+//	1    | # messages
+//	__________________________ Message 1
+//	2    | Message type
+//	?    | Message contents
+// .....
+//	__________________________ Message n
+//	2    | Message type
+//	?    | Message contents
+//	__________________________ Payload
+//	?    | Payload contents
 //////////////////////////////////////////////////////////////////////////
 
 
-// -- PACKET SIZE : 256 bytes
 #define PACKET_SIZE 256
-
-// -- PACKET HEADER SIZE : 12 bytes
-#define PACKET_HEADER_SIZE 12
-
-// -- PAYLOAD SIZE : 244 bytes
+#define PACKET_HEADER_SIZE 13		
 #define PAYLOAD_SIZE PACKET_SIZE-PACKET_HEADER_SIZE
 
 
@@ -67,6 +81,7 @@ public:
 	uint16_t GetID() const					{ return m_id; }
 	uint16_t GetAck() const					{ return m_ack; }
 	uint32_t GetAckBitfieldInt() const		{ return m_ackBitfieldInt; }
+	uint8_t GetNumMessages() const			{ return m_numMessages; }
 	
 	bool IsValidProtocolID() const			{ return m_remoteProtocolID == m_protocolID; }
 
@@ -91,6 +106,9 @@ protected:
 
 	// Protocol id -- ID for this protocol
 	uint32_t m_remoteProtocolID;
+
+	// Num messages - number of messages in this packet
+	uint8_t m_numMessages;
 
 	// ACK Bitfield
 	//std::bitset<BITFIELD_SIZE> m_bitfield;
